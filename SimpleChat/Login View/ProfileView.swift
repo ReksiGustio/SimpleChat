@@ -20,27 +20,29 @@ struct ProfileView: View {
                 if let selectedImage = settingsVM.selectedImage {
                     ZStack {
                         
-                        selectedImage
-                            .resizable()
-                            .scaledToFill()
-                            .clipShape(.circle)
-                        
-                        
                         if let existingImage = vm.loadUserImage() {
                             existingImage
                                 .resizable()
                                 .scaledToFill()
+                                .frame(width: 200, height: 200)
                                 .clipShape(.circle)
                         }
+                        
+                        selectedImage
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 200, height: 200)
+                            .clipShape(.circle)
+                        
                     } // end of zstack
                 } else {
                     Circle()
                         .fill(.secondary)
+                        .frame(width: 200, height: 200)
                 }
             }
             .onChange(of: settingsVM.pickerItem) { _ in settingsVM.loadImage() }
             .buttonStyle(PlainButtonStyle())
-            .frame(width: 200, height: 200)
             .padding()
             
             Form {
@@ -55,11 +57,12 @@ struct ProfileView: View {
                 Button("Save changes") {
                     vm.user.status = settingsVM.status
                     if settingsVM.compressedImage.isEmpty {
-                        vm.user.picture = ""
+                        vm.user.picture = nil
                     } else {
-                        vm.user.picture = settingsVM.compressedImage
+                        vm.user.picture = "http://172.20.57.25:3000/upload/profile/\(vm.userName)-profile_pic.jpg"
                     }
                     Task {
+                        await uploadImage(settingsVM.compressedImage, userName: vm.userName)
                         await vm.updateUser()
                         dismiss()
                     }
@@ -74,6 +77,7 @@ struct ProfileView: View {
             }
         }
         .onDisappear {
+            settingsVM.pickerItem = nil
             settingsVM.selectedImage = nil
         }
     } // end of body

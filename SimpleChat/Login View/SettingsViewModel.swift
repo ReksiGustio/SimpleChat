@@ -33,7 +33,8 @@ extension SettingsView {
         //used for image picker
         @Published var pickerItem: PhotosPickerItem?
         @Published var selectedImage: Image?
-        @Published var compressedImage = ""
+        @Published var compressedImage = Data()
+        @Published var compressedString = ""
         
         //used for loading an image
         func loadImage() {
@@ -44,17 +45,14 @@ extension SettingsView {
                 //load image to view
                 
                 //store image to binary data
-                if let thumbnail = inputImage.preparingThumbnail(of: CGSize(width: 64, height: 64)) {
-                    compressedImage = thumbnail.jpegData(compressionQuality: 1.0)?.base64EncodedString() ?? ""
+                if let thumbnail = inputImage.preparingThumbnail(of: CGSize(width: 256, height: 256)) {
+                    compressedImage = thumbnail.jpegData(compressionQuality: 1.0) ?? Data()
+                    compressedString = compressedImage.base64EncodedString()
                     
-                    let encodedData = compressedImage.base64Encoded
-                    print("encodedData: \(encodedData)")
-                    guard let data = encodedData.string?.base64Decoded else { return }
-                    print("data: \(data)")
+                    let encodedData = compressedString.base64Encoded
                     guard let stringData = encodedData.base64Decoded?.string else { return }
-                    print("stringData: \(stringData)")
 
-                    if let compressedUIImage = UIImage(data: encodedData) {
+                    if let compressedUIImage = UIImage(data: Data(base64Encoded: stringData) ?? Data()) {
                         selectedImage = Image(uiImage: compressedUIImage)
                     }
                 }

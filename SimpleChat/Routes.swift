@@ -6,6 +6,16 @@
 //
 
 import Foundation
+import UIKit
+
+extension Data {
+   mutating func append(_ string: String) {
+      if let data = string.data(using: .utf8) {
+         append(data)
+         print("data======>>>",data)
+      }
+   }
+}
 
 //----------------------------------------------------------------
 //register new user
@@ -52,11 +62,10 @@ func login(userName: String, password: String) async -> Data {
 
 //----------------------------------------------------------------
 //update user
-func update(userName: String, token: String, name: String, status: String?, images: String) async -> Data {
-    let userData = updateUserData(name: name, status: status, picture: images.isEmpty ? "" : images)
-    print("userData: \(userData)")
+func update(userName: String, token: String, name: String, status: String?, images: String?) async -> Data {
+    let userData = updateUserData(name: name, status: status, picture: images)
     guard let encoded = try? JSONEncoder().encode(userData) else { return Data() }
-    
+    print("userData: \(userData)")
     let url = URL(string: "http://172.20.57.25:3000/users/\(userName)")!
     var request = URLRequest(url: url)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -127,3 +136,52 @@ func sendMessage(message: String, sender: String, receiver: String, token: Strin
         return Data()
     }
 }
+
+//----------------------------------------------------------------
+//create image body for uploading
+func uploadImage(_ image: Data, userName: String) async {
+    let url = URL(string: "http://172.20.57.25:3000/upload/profile/\(userName)")!
+    var request = URLRequest.init(url: url)
+    request.httpMethod = "POST"
+    request.timeoutInterval = 10
+
+    let boundary = generateBoundaryString()
+
+    request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+    let imge: Data = image
+
+    let body = NSMutableData()
+
+    let fname = "profile_pic.jpg"
+    let mimetype = "image/png"
+
+    body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8, allowLossyConversion: true)!)
+    body.append("Content-Disposition:form-data; name=\"profile_pic\"\r\n\r\n".data(using: String.Encoding.utf8)!)
+    body.append("hi\r\n".data(using: String.Encoding.utf8)!)
+
+    body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8)!)
+    body.append("Content-Disposition:form-data; name=\"profile_pic\"; filename=\"\(fname)\"\r\n".data(using: String.Encoding.utf8)!)
+    body.append("Content-Type: \(mimetype)\r\n\r\n".data(using: String.Encoding.utf8)!)
+    body.append(imge)
+
+    body.append("\r\n".data(using: String.Encoding.utf8)!)
+    body.append("--\(boundary)--\r\n".data(using: String.Encoding.utf8)!)
+
+    request.httpBody = body as Data
+
+    do {
+        if let encoded = request.httpBody {
+            let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
+            print(String(data: data, encoding: .utf8) ?? "")
+        }
+    } catch {
+        print(error.localizedDescription)
+    }
+
+}
+
+func generateBoundaryString() -> String {
+    return "Boundary-\(NSUUID().uuidString)"
+}
+

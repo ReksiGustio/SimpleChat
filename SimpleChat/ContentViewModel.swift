@@ -149,8 +149,7 @@ extension ContentView {
         func updateUser() async {
             message = ""
             Task {
-                let tempResponse = await update(userName: userName, token: token, name: user.name, status: user.status, images: user.picture ?? "")
-                print(String(data: tempResponse, encoding: .utf8) ?? "")
+                let tempResponse = await update(userName: userName, token: token, name: user.name, status: user.status, images: user.picture)
                 
                 if tempResponse.isEmpty {
                     message = "Error: Request timed out"
