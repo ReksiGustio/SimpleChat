@@ -57,6 +57,7 @@ struct LoginSuccessData: Codable {
 struct updateUserData: Codable {
     let name: String
     let status: String?
+    let picture: String
 }
 
 //----------------------------------------------------------------

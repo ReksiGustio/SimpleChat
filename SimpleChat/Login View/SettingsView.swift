@@ -21,10 +21,21 @@ struct SettingsView: View {
                 } label: {
                     HStack {
                         //image placeholder
-                        Circle()
-                            .fill(.secondary)
-                            .frame(width: 64, height: 64)
-                            .padding(5)
+                        ZStack {
+                            Circle()
+                                .fill(.secondary)
+                                .frame(width: 64, height: 64)
+                                .padding(5)
+                            
+                            if let existingImage = vm.loadUserImage() {
+                                existingImage
+                                    .resizable()
+                                    .scaledToFill()
+                                    .clipShape(.circle)
+                                    .frame(width: 64, height: 64)
+                                    .padding(5)
+                            }
+                        }
                         
                         VStack(alignment: .leading) {
                             Text(vm.user.name)

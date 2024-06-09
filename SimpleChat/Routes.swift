@@ -52,8 +52,9 @@ func login(userName: String, password: String) async -> Data {
 
 //----------------------------------------------------------------
 //update user
-func update(userName: String, token: String, name: String, status: String?) async -> Data {
-    let userData = updateUserData(name: name, status: status)
+func update(userName: String, token: String, name: String, status: String?, images: String) async -> Data {
+    let userData = updateUserData(name: name, status: status, picture: images.isEmpty ? "" : images)
+    print("userData: \(userData)")
     guard let encoded = try? JSONEncoder().encode(userData) else { return Data() }
     
     let url = URL(string: "http://172.20.57.25:3000/users/\(userName)")!

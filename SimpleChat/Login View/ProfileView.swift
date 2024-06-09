@@ -18,10 +18,21 @@ struct ProfileView: View {
             
             PhotosPicker(selection: $settingsVM.pickerItem) {
                 if let selectedImage = settingsVM.selectedImage {
-                    selectedImage
-                        .resizable()
-                        .scaledToFill()
-                        .clipShape(.circle)
+                    ZStack {
+                        
+                        selectedImage
+                            .resizable()
+                            .scaledToFill()
+                            .clipShape(.circle)
+                        
+                        
+                        if let existingImage = vm.loadUserImage() {
+                            existingImage
+                                .resizable()
+                                .scaledToFill()
+                                .clipShape(.circle)
+                        }
+                    } // end of zstack
                 } else {
                     Circle()
                         .fill(.secondary)
@@ -43,6 +54,11 @@ struct ProfileView: View {
                 
                 Button("Save changes") {
                     vm.user.status = settingsVM.status
+                    if settingsVM.compressedImage.isEmpty {
+                        vm.user.picture = ""
+                    } else {
+                        vm.user.picture = settingsVM.compressedImage
+                    }
                     Task {
                         await vm.updateUser()
                         dismiss()
@@ -57,7 +73,11 @@ struct ProfileView: View {
                 settingsVM.status = vm.user.status ?? ""
             }
         }
+        .onDisappear {
+            settingsVM.selectedImage = nil
+        }
     } // end of body
+    
 } // end of profileview
 
 #Preview {

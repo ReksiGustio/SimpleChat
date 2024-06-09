@@ -149,7 +149,8 @@ extension ContentView {
         func updateUser() async {
             message = ""
             Task {
-                let tempResponse = await update(userName: userName, token: token, name: user.name, status: user.status)
+                let tempResponse = await update(userName: userName, token: token, name: user.name, status: user.status, images: user.picture ?? "")
+                print(String(data: tempResponse, encoding: .utf8) ?? "")
                 
                 if tempResponse.isEmpty {
                     message = "Error: Request timed out"
@@ -186,6 +187,18 @@ extension ContentView {
                 } // end for
             }
         } // end of updatecontacts
+        
+        //load image
+        func loadUserImage() -> Image? {
+            if let stringPicture = user.picture {
+                let dataPicture = Data(base64Encoded: stringPicture, options: .ignoreUnknownCharacters)
+                if let UIPicture = UIImage(data: dataPicture ?? Data()) {
+                    return Image(uiImage: UIPicture)
+                }
+            }
+            
+            return nil
+        }
         
         //----------------------------------------------------------------
         //get message
