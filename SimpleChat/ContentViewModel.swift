@@ -65,7 +65,11 @@ extension ContentView {
         
         //store messages
         @Published var timer = Timer.publish(every: 5, tolerance: 2, on: .main, in: .common).autoconnect()
-        @Published var allMessages = [Messages]()
+        var allMessages = [Messages]() {
+            willSet {
+                objectWillChange.send()
+            }
+        }
         @Published var messageText = ""
         
         //used for showing an alert after REST API used
@@ -144,6 +148,7 @@ extension ContentView {
                     if let imageURL = data.data.user.picture {
                         userImage = await downloadImage(url: imageURL) ?? Data()
                     }
+                    timer = Timer.publish(every: 5, tolerance: 2, on: .main, in: .common).autoconnect()
                     await updateContacts()
                     loginState = .login
                     await updateContactsImage()
@@ -299,7 +304,7 @@ extension ContentView {
                         if let lastDate = data.data.last?.date {
                             messages.lastDate = dateFormatter.date(from: lastDate)!
                         }
-
+                        
                         for _ in allMessages {
                             if let messageIndex = allMessages.firstIndex(where: { $0.receiver == receiver }) {
                                 allMessages[messageIndex].items = messages.items
@@ -308,7 +313,7 @@ extension ContentView {
                         }
                         allMessages.append(messages)
                     }
-                }
+                } // end task
             }
         } // end of get message func
         
@@ -327,6 +332,7 @@ extension ContentView {
         //----------------------------------------------------------------
         //logout user
         func logout() {
+            timer.upstream.connect().cancel()
             user = User.empty
             token = ""
             message = ""

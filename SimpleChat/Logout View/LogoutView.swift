@@ -10,6 +10,7 @@ import SwiftUI
 struct LogoutView: View {
     @ObservedObject var vm: ContentView.VM
     @StateObject var logoutVM = LogoutVM()
+    @FocusState private var isFocused: Bool
     
     var body: some View {
         VStack {
@@ -21,10 +22,13 @@ struct LogoutView: View {
             //Text field
             Group {
                 TextField("Username", text: $vm.userName)
+                    .focused($isFocused)
                 if vm.showPassword {
                     TextField("Password", text: $vm.password)
+                        .focused($isFocused)
                 } else {
                     SecureField("Password", text: $vm.password)
+                        .focused($isFocused)
                 }
             }
             .autocapitalization(.none)
@@ -70,6 +74,12 @@ struct LogoutView: View {
             } // end of hstack
             
         } // end of vstack
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { isFocused = false }
+            }
+        }
         .alert(vm.message, isPresented: $vm.showMessage) { } message: {
             Text(vm.subMessage)
         }

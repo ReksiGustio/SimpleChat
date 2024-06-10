@@ -11,6 +11,7 @@ struct MessageView: View {
     @ObservedObject var vm: ContentView.VM
     @ObservedObject var chatsVM: ChatsView.ChatsVM
     @State private var isOpened = false
+    @FocusState private var isFocused: Bool
     var messages: Messages
     
     var body: some View {
@@ -35,6 +36,7 @@ struct MessageView: View {
                     HStack(alignment: .bottom) {
                         TextField("Write your message", text: $vm.messageText, axis: .vertical)
                             .padding(.bottom, 10)
+                            .focused($isFocused)
                         
                         Spacer()
                         
@@ -67,6 +69,12 @@ struct MessageView: View {
         } // end of scrollviewreader
         .navigationTitle(messages.displayName)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { isFocused = false }
+            }
+        }
         .onAppear {
             if isOpened == false {
                 Task {

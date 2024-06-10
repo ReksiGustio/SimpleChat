@@ -12,6 +12,7 @@ struct ProfileView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var vm: ContentView.VM
     @StateObject var settingsVM: SettingsView.SettingsVM
+    @FocusState private var isFocused: Bool
     
     var body: some View {
         VStack {
@@ -66,10 +67,13 @@ struct ProfileView: View {
             Form {
                 Section("Display name:") {
                     TextField("Available", text: $vm.user.name)
+                        .focused($isFocused)
+                    
                 }
                 
                 Section("Set status:") {
                     TextField("Available", text: $settingsVM.status)
+                        .focused($isFocused)
                 }
                 
                 Button("Save changes") {
@@ -77,7 +81,7 @@ struct ProfileView: View {
                     if settingsVM.compressedImage.isEmpty {
                             vm.user.picture = ""
                     } else {
-                        vm.user.picture = "http://localhost:3000/download/profile/\(vm.userName)-profile_pic.jpg"
+                        vm.user.picture = "http://172.20.57.25:3000/download/profile/\(vm.userName)-profile_pic.jpg"
                         vm.userImage = settingsVM.compressedImage
                     }
                     Task {
@@ -91,6 +95,12 @@ struct ProfileView: View {
         } // end of vstack
         .navigationTitle("Edit Profile")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { isFocused = false }
+            }
+        }
         .onAppear {
             if vm.user.status != nil {
                 settingsVM.status = vm.user.status ?? ""

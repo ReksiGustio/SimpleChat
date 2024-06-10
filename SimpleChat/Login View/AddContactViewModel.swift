@@ -16,9 +16,10 @@ extension AddContactView {
     //search user
     func searchUser(_ userName: String) async {
         contactsVM.message = ""
+        let trimmedUsername = userName.filter { !$0.isWhitespace }
         if !contactsVM.searchName.isEmpty {
             Task {
-                if let tempResponse = await search(userName: userName, token: vm.token) {
+                if let tempResponse = await search(userName: trimmedUsername, token: vm.token) {
                     print(String(data: tempResponse, encoding: .utf8)!)
                     if let data = try? JSONDecoder().decode(ResponseData<User>.self, from: tempResponse) {
                         contactsVM.user = data.data

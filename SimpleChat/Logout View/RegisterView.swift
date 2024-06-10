@@ -11,6 +11,7 @@ struct RegisterView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var vm: ContentView.VM
     @ObservedObject var logoutVM: LogoutView.LogoutVM
+    @FocusState private var isFocused: Bool
     var logoutView: LogoutView
     
     var body: some View {
@@ -23,13 +24,19 @@ struct RegisterView: View {
             //Text field
             Group {
                 TextField("Display Name", text: $vm.name)
+                    .focused($isFocused)
                 TextField("Username", text: $vm.userName)
+                    .focused($isFocused)
                 if vm.showPassword {
                     TextField("Password", text: $vm.password)
+                        .focused($isFocused)
                     TextField("Confirmation Password", text: $logoutVM.confirmationPassword)
+                        .focused($isFocused)
                 } else {
                     SecureField("Password", text: $vm.password)
+                        .focused($isFocused)
                     SecureField("Confirmation Password", text: $logoutVM.confirmationPassword)
+                        .focused($isFocused)
                 }
             }
             .autocapitalization(.none)
@@ -76,6 +83,12 @@ struct RegisterView: View {
             } // end of hstack
             
         } // end of vstack
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { isFocused = false }
+            }
+        }
         .onAppear {
             logoutVM.errorMessage = ""
         }

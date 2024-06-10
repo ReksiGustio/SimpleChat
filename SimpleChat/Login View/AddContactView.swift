@@ -11,6 +11,7 @@ struct AddContactView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var vm: ContentView.VM
     @ObservedObject var contactsVM: ContactsView.ContactsVM
+    @FocusState private var isFocused: Bool
     
     var body: some View {
         Form {
@@ -19,6 +20,7 @@ struct AddContactView: View {
                     TextField("Insert Username", text: $contactsVM.searchName)
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
+                        .focused($isFocused)
                     
                     Button("Submit") {
                         Task {
@@ -68,6 +70,12 @@ struct AddContactView: View {
         } // end of form
         .navigationTitle("Add New Contact")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { isFocused = false }
+            }
+        }
         
         .onAppear { contactsVM.user = nil }
         .alert(contactsVM.message, isPresented: $contactsVM.showMessage) { }
