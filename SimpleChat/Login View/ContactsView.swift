@@ -34,9 +34,21 @@ struct ContactsView: View {
                 List(filteredContacts) { user in
                     HStack(spacing: 20) {
                         //image placeholder
-                        Circle()
-                            .fill(.secondary)
-                            .frame(width: 44, height: 44)
+                        ZStack {
+                            Circle()
+                                .fill(.secondary)
+                                .frame(width: 44, height: 44)
+                                .padding(5)
+                            
+                            if let loadedImage = loadContactImage(user.userName) {
+                                loadedImage
+                                    .resizable()
+                                    .scaledToFill()
+                                    .clipShape(.circle)
+                                    .frame(width: 44, height: 44)
+                                    .padding(5)
+                            }
+                        } // end of zstack
                         
                         VStack(alignment: .leading) {
                             Text(user.name)

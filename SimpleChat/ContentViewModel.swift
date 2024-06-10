@@ -36,15 +36,17 @@ extension ContentView {
             }
         }
         
-        //used for showing an alert after REST API used
-        @Published private(set) var message = ""
-        @Published private(set) var subMessage = ""
-        @Published var showMessage = false
-        
         //store current user data
         @Published var title = ""
         @Published private(set) var token = ""
         @Published var user = User.empty
+        @Published var userImage = Data() {
+            didSet {
+                UserDefaults.standard.setValue(userImage, forKey: imageKey)
+            }
+        }
+        
+        //store other contacts locally
         @Published var chatContacts: Users?
         @Published var contacts = [User.empty]  {
             didSet {
@@ -53,9 +55,11 @@ extension ContentView {
                 }
             }
         }
-        @Published var userImage = Data() {
+        @Published var contactsPicture = [UserImage]() {
             didSet {
-                UserDefaults.standard.setValue(userImage, forKey: imageKey)
+                if let encoded = try? JSONEncoder().encode(contactsPicture) {
+                    UserDefaults.standard.set(encoded, forKey: contactsPictureKey)
+                }
             }
         }
         
@@ -64,13 +68,19 @@ extension ContentView {
         @Published var allMessages = [Messages]()
         @Published var messageText = ""
         
+        //used for showing an alert after REST API used
+        @Published private(set) var message = ""
+        @Published private(set) var subMessage = ""
+        @Published var showMessage = false
+        
+        //used for load data locally
         var saveKey: String { user.userName }
+        var contactsPictureKey: String { "\(user.userName)-contactsPicture" }
         var imageKey: String { "\(user.userName)-profile" }
         
         //initializer
         init() {
             userName = UserDefaults.standard.string(forKey: "name") ?? ""
-            userImage = UserDefaults.standard.data(forKey: imageKey) ?? Data()
             rememberUser = UserDefaults.standard.bool(forKey: "rememberUser")
             if rememberUser {
                 password = UserDefaults.standard.string(forKey: "password") ?? ""
@@ -130,11 +140,13 @@ extension ContentView {
                     token = data.data.token
                     allMessages = []
                     contacts = loadContacts(saveKey)
+                    contactsPicture = loadContactsPicture(contactsPictureKey)
                     if let imageURL = data.data.user.picture {
                         userImage = await downloadImage(url: imageURL) ?? Data()
                     }
                     await updateContacts()
                     loginState = .login
+                    await updateContactsImage()
                 }
                 else if let data = try? JSONDecoder().decode(Response.self, from: tempResponse) {
                     message = data.message
@@ -153,6 +165,23 @@ extension ContentView {
             
             return []
         } // end of load contacts func
+        
+        func loadContactsPicture(_ key: String) -> [UserImage] {
+            if let data = UserDefaults.standard.data(forKey: key) {
+                if let decodedData = try? JSONDecoder().decode([UserImage].self, from: data) {
+                    return decodedData
+                }
+            }
+            
+            return []
+        } // end of load contacts func
+        
+        func loadUserPicture(_ key: String) -> Data {
+            if let data = UserDefaults.standard.data(forKey: imageKey) {
+                return data
+            }
+            return Data()
+        }
         
         //----------------------------------------------------------------
         //update user
@@ -197,6 +226,21 @@ extension ContentView {
             }
         } // end of updatecontacts
         
+        //update one contact
+        func updateContact(_ userName: String) async {
+            if let index = contacts.firstIndex(where: { $0.userName == userName }) {
+                Task {
+                    if let response = await search(userName: userName, token: token) {
+                        if let data = try? JSONDecoder().decode(ResponseData<User>.self, from: response) {
+                            contacts[index].name = data.data.name
+                            contacts[index].status = data.data.status
+                            contacts[index].picture = data.data.picture
+                        }
+                    }
+                } // end of task
+            }
+        } // end of udpatecontact
+        
         //----------------------------------------------------------------
         //load image
         func loadUserImage(data: Data) -> Image? {
@@ -205,7 +249,22 @@ extension ContentView {
             }
             
             return nil
-        }
+        } // end of load user image
+        
+        func updateContactsImage() async {
+            if !contactsPicture.isEmpty {
+                for user in contactsPicture {
+                    guard let index = contacts.firstIndex(where: { $0.userName == user.userName }) else { continue }
+                    Task {
+                        guard let stringURL = contacts[index].picture else { return }
+                        guard let downloadedImageData = await downloadImage(url: stringURL) else { return }
+                        if let userIndex = contactsPicture.firstIndex(where: { $0.userName == user.userName} ) {
+                            contactsPicture[userIndex].imageData = downloadedImageData
+                        }
+                    } // end task
+                }
+            } // end if
+        } // end of update contacts image
         
         //download image
         func downloadImage(url: String) async -> Data? {
@@ -275,6 +334,7 @@ extension ContentView {
             title = ""
             showMessage = false
             rememberUser = false
+            userImage = Data()
             loginState = .logout
         }
     } // end of viewmodel

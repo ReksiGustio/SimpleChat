@@ -14,16 +14,25 @@ struct TextView: View {
     var body: some View {
         if !message.userRelated.hasPrefix(vm.userName) {
             HStack {
-                HStack(alignment: .lastTextBaseline) {
+                VStack(alignment: .leading) {
                     Text(message.text)
                         .padding(.trailing, 12)
                     
-                    Text("\(convertDate(message.date).formatted(date: .omitted, time: .shortened))")
+                    Text(convertDate(message.date), format: .dateTime.month().day().hour().minute())
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
-                } // end of hstack
+
+                } // end of vstack
                 .padding(10)
                 .background(.primary.opacity(0.05))
                 .clipShape(.rect(cornerRadius: 15))
+                .contextMenu {
+                    Button {
+                        UIPasteboard.general.string = message.text
+                    } label: {
+                        Label("Copy text to clipboard", systemImage: "doc.on.doc")
+                    }
+                }
                 .padding(.bottom, 10)
                 
                 Spacer()
@@ -41,18 +50,25 @@ struct TextView: View {
                 
                 Spacer()
                 
-                HStack(alignment: .firstTextBaseline) {
-                    Text("\(convertDate(message.date).formatted(date: .omitted, time: .shortened))")
-                        .foregroundStyle(.secondary)
-                    
+                VStack(alignment: .trailing) {
                     Text(message.text)
                         .padding(.leading, 12)
                     
-                    
-                } // end of hstack
+                    Text(convertDate(message.date), format: .dateTime.month().day().hour().minute())
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+  
+                } // end of vstack
                 .padding(10)
                 .background(.blue.opacity(0.5))
                 .clipShape(.rect(cornerRadius: 15))
+                .contextMenu {
+                    Button {
+                        UIPasteboard.general.string = message.text
+                    } label: {
+                        Label("Copy text to clipboard", systemImage: "doc.on.doc")
+                    }
+                }
                 .padding(.bottom, 10)
                 
             } // end of hstack
@@ -69,5 +85,5 @@ struct TextView: View {
 } // end of textview
 
 #Preview {
-    TextView(vm: ContentView.VM(), message: Message(id: 0, userRelated: "", text: "halodoc", image: nil, date: ""))
+    TextView(vm: ContentView.VM(), message: Message(id: 0, userRelated: "", text: "P", image: nil, date: ""))
 }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MessageView: View {
     @ObservedObject var vm: ContentView.VM
+    @ObservedObject var chatsVM: ChatsView.ChatsVM
     @State private var isOpened = false
     var messages: Messages
     
@@ -74,7 +75,11 @@ struct MessageView: View {
                 }
             }
         }
-        
+        .onDisappear {
+            chatsVM.user = nil
+            chatsVM.ipadUser = nil
+            chatsVM.selection = nil
+        }
     } // end of body
     
     var sortedMessages: [Message] {
@@ -88,5 +93,5 @@ struct MessageView: View {
 } // end of message view
 
 #Preview {
-    MessageView(vm: ContentView.VM(), messages: Messages.example)
+    MessageView(vm: ContentView.VM(), chatsVM: ChatsView.ChatsVM(), messages: Messages.example)
 }

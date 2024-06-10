@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var vm = VM()
-    
+    @StateObject private var vm = VM()    
     var body: some View {
         ZStack {
             

@@ -47,6 +47,11 @@ struct SettingsView: View {
                     } // end of hstack
                 } // end of profile
                 
+                Text("Username: \(vm.user.userName)")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                
                 //logout
                 Section {
                     Button("Log out") { settingsVM.showLogoutAlert = true }

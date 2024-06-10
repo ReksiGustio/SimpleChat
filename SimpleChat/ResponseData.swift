@@ -62,7 +62,7 @@ struct updateUserData: Codable {
 
 //----------------------------------------------------------------
 //single user property
-struct User: Codable, Identifiable {
+struct User: Codable, Identifiable, Hashable {
     let id: Int
     var name: String
     let userName: String

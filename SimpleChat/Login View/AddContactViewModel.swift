@@ -28,6 +28,7 @@ extension AddContactView {
                             guard let stringURL = data.data.picture else { return }
                             guard let downloadedImageData = await vm.downloadImage(url: stringURL) else { return }
                             if let UIImage = UIImage(data: downloadedImageData) {
+                                contactsVM.downloadedData = downloadedImageData
                                 contactsVM.downloadedImage = Image(uiImage: UIImage)
                             }
                         }
@@ -51,6 +52,10 @@ extension AddContactView {
         }
         
         vm.contacts.append(contactsVM.user!)
+        vm.contactsPicture.append(UserImage(userName: contactsVM.user?.userName ?? "", imageData: contactsVM.downloadedData))
+        Task {
+            await vm.updateContact(contactsVM.user?.userName ?? "")
+        }
         dismiss()
     } // end of check contact func
 }

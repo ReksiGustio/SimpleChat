@@ -9,7 +9,8 @@ import SwiftUI
 
 struct NewChatView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var searchText = ""
+    @ObservedObject var vm: ContentView.VM
+    @State var searchText = ""
     let contacts: Users
     var selectedContact: (User) -> Void
     
@@ -22,9 +23,21 @@ struct NewChatView: View {
                 } label: {
                     HStack(spacing: 20) {
                         //image placeholder
-                        Circle()
-                            .fill(.secondary)
-                            .frame(width: 44, height: 44)
+                        ZStack {
+                            Circle()
+                                .fill(.secondary)
+                                .frame(width: 44, height: 44)
+                                .padding(5)
+                            
+                            if let loadedImage = loadContactImage(user.userName) {
+                                loadedImage
+                                    .resizable()
+                                    .scaledToFill()
+                                    .clipShape(.circle)
+                                    .frame(width: 44, height: 44)
+                                    .padding(5)
+                            }
+                        } // end of zstack
                         
                         VStack(alignment: .leading) {
                             Text(user.name)
@@ -42,23 +55,13 @@ struct NewChatView: View {
         } // end of navstack
     } // end of body
     
-    init(contacts: Users, selectedContact: @escaping (User) -> Void) {
+    init(vm: ContentView.VM, contacts: Users, selectedContact: @escaping (User) -> Void) {
+        self.vm = vm
         self.contacts = contacts
         self.selectedContact = selectedContact
     }
-    
-    var filteredContacts: [User] {
-        if searchText.isEmpty {
-            contacts.users.sorted { $0.name < $1.name }
-        } else {
-            contacts.users
-                .sorted { $0.name < $1.name }
-                .filter { $0.name.localizedCaseInsensitiveContains(searchText)}
-        }
-    }
-    
-}
+} // end of newchatview
 
 #Preview {
-    NewChatView(contacts: Users()) { _ in }
+    NewChatView(vm: ContentView.VM(), contacts: Users()) { _ in }
 }
