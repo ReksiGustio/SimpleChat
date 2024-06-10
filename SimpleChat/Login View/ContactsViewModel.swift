@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension ContactsView {
     // ViewModel for creating state properties
@@ -21,6 +22,7 @@ extension ContactsView {
         
         //used for storing contact info
         @Published var user: User? = nil
+        @Published var downloadedImage: Image?
     } // end of view model
     
     var filteredContacts: [User] {

@@ -18,32 +18,50 @@ struct ProfileView: View {
             
             PhotosPicker(selection: $settingsVM.pickerItem) {
                 if let selectedImage = settingsVM.selectedImage {
-                    ZStack {
-                        
-                        if let existingImage = vm.loadUserImage() {
-                            existingImage
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 200, height: 200)
-                                .clipShape(.circle)
-                        }
-                        
-                        selectedImage
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 200, height: 200)
-                            .clipShape(.circle)
-                        
-                    } // end of zstack
+                    selectedImage
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 200, height: 200)
+                        .clipShape(.circle)
+                } else if let existingImage = vm.loadUserImage(data: vm.userImage) {
+                    existingImage
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 200, height: 200)
+                        .clipShape(.circle)
                 } else {
                     Circle()
                         .fill(.secondary)
                         .frame(width: 200, height: 200)
                 }
-            }
+            } // end of photopicker
             .onChange(of: settingsVM.pickerItem) { _ in settingsVM.loadImage() }
             .buttonStyle(PlainButtonStyle())
             .padding()
+            
+            HStack {
+                if settingsVM.pickerItem != nil {
+                    Button("Reset") {
+                        settingsVM.pickerItem = nil
+                        settingsVM.selectedImage = nil
+                    }
+                    .buttonStyle(BorderedProminentButtonStyle())
+                    .padding(.bottom, 10)
+                }
+                
+                if !vm.userImage.isEmpty {
+                    Button("Remove Picture") {
+                        vm.userImage = Data()
+                        vm.user.picture = ""
+                        settingsVM.pickerItem = nil
+                        settingsVM.selectedImage = nil
+                        settingsVM.compressedImage = Data()
+                    }
+                    .buttonStyle(BorderedProminentButtonStyle())
+                    .padding(.bottom, 10)
+                }
+                
+            } // end of hstack
             
             Form {
                 Section("Display name:") {
@@ -57,13 +75,15 @@ struct ProfileView: View {
                 Button("Save changes") {
                     vm.user.status = settingsVM.status
                     if settingsVM.compressedImage.isEmpty {
-                        vm.user.picture = nil
+                            vm.user.picture = ""
                     } else {
-                        vm.user.picture = "http://172.20.57.25:3000/upload/profile/\(vm.userName)-profile_pic.jpg"
+                        vm.user.picture = "http://172.20.57.25:3000/download/profile/\(vm.userName)-profile_pic.jpg"
+                        vm.userImage = settingsVM.compressedImage
                     }
                     Task {
                         await uploadImage(settingsVM.compressedImage, userName: vm.userName)
                         await vm.updateUser()
+                        
                         dismiss()
                     }
                 }

@@ -27,7 +27,7 @@ struct SettingsView: View {
                                 .frame(width: 64, height: 64)
                                 .padding(5)
                             
-                            if let existingImage = vm.loadUserImage() {
+                            if let existingImage = vm.loadUserImage(data: vm.userImage) {
                                 existingImage
                                     .resizable()
                                     .scaledToFill()
@@ -35,7 +35,7 @@ struct SettingsView: View {
                                     .frame(width: 64, height: 64)
                                     .padding(5)
                             }
-                        }
+                        } // end of zstack
                         
                         VStack(alignment: .leading) {
                             Text(vm.user.name)

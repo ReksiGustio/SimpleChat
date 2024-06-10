@@ -72,6 +72,12 @@ struct User: Codable, Identifiable {
     static let empty = User(id: 0, name: "dummy name", userName: "dummy username", status: nil, picture: nil)
 }
 
+//struct that store local image data {
+struct UserImage: Codable {
+    var userName: String
+    var imageData: Data?
+}
+
  //many user property
 struct Users: Codable, Identifiable {
     var id = UUID()
@@ -92,7 +98,7 @@ struct MessageText: Codable {
     let message: String
 }
     
-    //struct that contains messages
+//struct that contains messages
 struct Messages: Identifiable, Hashable {
     
     let id = UUID().uuidString

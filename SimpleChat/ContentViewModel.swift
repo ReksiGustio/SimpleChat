@@ -53,6 +53,11 @@ extension ContentView {
                 }
             }
         }
+        @Published var userImage = Data() {
+            didSet {
+                UserDefaults.standard.setValue(userImage, forKey: imageKey)
+            }
+        }
         
         //store messages
         @Published var timer = Timer.publish(every: 5, tolerance: 2, on: .main, in: .common).autoconnect()
@@ -60,10 +65,12 @@ extension ContentView {
         @Published var messageText = ""
         
         var saveKey: String { user.userName }
+        var imageKey: String { "\(user.userName)-profile" }
         
         //initializer
         init() {
             userName = UserDefaults.standard.string(forKey: "name") ?? ""
+            userImage = UserDefaults.standard.data(forKey: imageKey) ?? Data()
             rememberUser = UserDefaults.standard.bool(forKey: "rememberUser")
             if rememberUser {
                 password = UserDefaults.standard.string(forKey: "password") ?? ""
@@ -123,6 +130,9 @@ extension ContentView {
                     token = data.data.token
                     allMessages = []
                     contacts = loadContacts(saveKey)
+                    if let imageURL = data.data.user.picture {
+                        userImage = await downloadImage(url: imageURL) ?? Data()
+                    }
                     await updateContacts()
                     loginState = .login
                 }
@@ -187,16 +197,29 @@ extension ContentView {
             }
         } // end of updatecontacts
         
+        //----------------------------------------------------------------
         //load image
-        func loadUserImage() -> Image? {
-            if let stringPicture = user.picture {
-                let dataPicture = Data(base64Encoded: stringPicture, options: .ignoreUnknownCharacters)
-                if let UIPicture = UIImage(data: dataPicture ?? Data()) {
-                    return Image(uiImage: UIPicture)
-                }
+        func loadUserImage(data: Data) -> Image? {
+            if let UIPicture = UIImage(data: data) {
+                return Image(uiImage: UIPicture)
             }
             
             return nil
+        }
+        
+        //download image
+        func downloadImage(url: String) async -> Data? {
+            guard let imageURL = URL(string: url) else { return nil }
+            let request = URLRequest(url: imageURL)
+                
+            do {
+                let (data, _) = try await URLSession.shared.data(for: request)
+                return data
+            } catch {
+                print(error.localizedDescription)
+                return nil
+            }
+            
         }
         
         //----------------------------------------------------------------

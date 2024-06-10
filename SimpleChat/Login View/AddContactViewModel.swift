@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension AddContactView {
     var sameUser: Bool {
@@ -22,8 +23,15 @@ extension AddContactView {
                     if let data = try? JSONDecoder().decode(ResponseData<User>.self, from: tempResponse) {
                         contactsVM.user = data.data
                         contactsVM.searchName = ""
-                    }
-                    else if let data = try? JSONDecoder().decode(Response.self, from: tempResponse) {
+                        contactsVM.downloadedImage = nil
+                        Task {
+                            guard let stringURL = data.data.picture else { return }
+                            guard let downloadedImageData = await vm.downloadImage(url: stringURL) else { return }
+                            if let UIImage = UIImage(data: downloadedImageData) {
+                                contactsVM.downloadedImage = Image(uiImage: UIImage)
+                            }
+                        }
+                    } else if let data = try? JSONDecoder().decode(Response.self, from: tempResponse) {
                         contactsVM.message = data.message
                         contactsVM.showMessage = true
                     }

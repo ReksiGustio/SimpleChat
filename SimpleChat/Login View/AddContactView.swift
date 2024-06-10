@@ -32,10 +32,21 @@ struct AddContactView: View {
                 if let user = contactsVM.user {
                     HStack {
                         //image placeholder
-                        Circle()
-                            .fill(.secondary)
-                            .frame(width: 64, height: 64)
-                            .padding(5)
+                        ZStack {
+                            Circle()
+                                .fill(.secondary)
+                                .frame(width: 64, height: 64)
+                                .padding(5)
+                            
+                            if let downloadedImage = contactsVM.downloadedImage {
+                                downloadedImage
+                                    .resizable()
+                                    .scaledToFill()
+                                    .clipShape(.circle)
+                                    .frame(width: 64, height: 64)
+                                    .padding(5)
+                            }
+                        } // end of zstack
                         
                         VStack(alignment: .leading) {
                             Text(user.name)
