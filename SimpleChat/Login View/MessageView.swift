@@ -19,7 +19,7 @@ struct MessageView: View {
         ScrollViewReader { value in
             VStack {
                 ScrollView {
-                    LazyVStack {
+                    VStack {
                         ForEach(sortedMessages) { message in
                             TextView(vm: vm, message: message)
                         } // end of foreach
@@ -28,6 +28,11 @@ struct MessageView: View {
                             .fill(.clear)
                             .frame(maxHeight: 1)
                             .id(1)
+                            .onAppear {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    value.scrollTo(1, anchor: .init(x: 0, y: -500))
+                                }
+                            }
                         
                     } // end of vstack
                     .padding()
@@ -56,7 +61,9 @@ struct MessageView: View {
                                     await vm.sendText(text: vm.messageText, image: nil, receiver: messages.receiver, displayName: messages.displayName)
                                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
                                 }
-                                value.scrollTo(1)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    value.scrollTo(1, anchor: .init(x: 0, y: -500))
+                                }
                             }
                         } label: {
                             Image(systemName: "paperplane.fill")
@@ -79,6 +86,31 @@ struct MessageView: View {
         .navigationTitle(messages.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItemGroup(placement: .principal) {
+                HStack {
+                    ZStack {
+                        Circle().fill(.secondary)
+                        
+                        if let image = profilePicture {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .clipShape(.circle)
+                        }
+                    }
+                    .frame(width: 44, height: 44)
+                    .padding(.trailing, 5)
+                    
+                    VStack(alignment: .leading) {
+                        Text(messages.displayName)
+                            .font(.headline)
+                        Text(status)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    } // end of vstack
+                } // end of hstack
+            }
+            
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 Button("Done") { isFocused = false }
@@ -88,7 +120,7 @@ struct MessageView: View {
             PhotoPreview(preview: photo, receiver: messages.displayName) { data in
                 Task {
                     let id = UUID().uuidString
-                    let imageString = "http://localhost:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
+                    let imageString = "http://172.20.57.25:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
                     await vm.sendText(text: "", image: imageString, receiver: messages.receiver, displayName: messages.displayName)
                     await uploadMessageImage(data, id: id, sender: vm.userName, receiver: messages.receiver)
                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
@@ -116,6 +148,22 @@ struct MessageView: View {
         }
         
         return []
+    }
+    
+    var status: String {
+        if let index = vm.contacts.firstIndex(where: { $0.name == messages.displayName }) {
+            return vm.contacts[index].status ?? ""
+        }
+        return ""
+    }
+    
+    var profilePicture: Image? {
+        guard let index = vm.contactsPicture.firstIndex(where: { $0.userName == messages.receiver }) else { return nil }
+        guard let imageData = vm.contactsPicture[index].imageData else { return nil }
+        if let UIImage = UIImage(data: imageData) {
+            return Image(uiImage: UIImage)
+        }
+        return nil
     }
     
 } // end of message view

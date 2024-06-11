@@ -69,7 +69,7 @@ struct User: Codable, Identifiable, Hashable {
     var status: String?
     var picture: String?
     
-    static let empty = User(id: 0, name: "dummy name", userName: "dummy username", status: nil, picture: nil)
+    static let empty = User(id: 0, name: "dummy name", userName: "dummy username", status: "Available", picture: nil)
 }
 
 //struct that store local image data {
