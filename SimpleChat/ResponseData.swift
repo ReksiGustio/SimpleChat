@@ -6,7 +6,7 @@
 //  Created by Reksi Gustio on 07/06/24.
 //
 
-import Foundation
+import SwiftUI
 
 //this used for default response
 struct Response: Codable {
@@ -95,7 +95,17 @@ struct Message: Codable, Hashable, Identifiable {
 
 //message to send property
 struct MessageText: Codable {
-    let message: String
+    let message: String?
+    let image: String?
+}
+
+//preview photo
+struct PreviewPhoto: Identifiable {
+    let id = UUID()
+    let photo: Image
+    let data: Data
+    
+    static let example = PreviewPhoto(photo: Image(systemName: "xmark.circle"), data: Data())
 }
     
 //struct that contains messages

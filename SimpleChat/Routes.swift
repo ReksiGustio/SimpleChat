@@ -23,7 +23,7 @@ func register(name: String, userName: String, password: String) async -> Data {
     let userData = RegisterData(name: name, userName: userName, password: password)
     guard let encoded = try? JSONEncoder().encode(userData) else { return Data() }
     
-    let url = URL(string: "http://172.20.57.25:3000/register")!
+    let url = URL(string: "http://localhost:3000/register")!
     var request = URLRequest(url: url)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "POST"
@@ -44,7 +44,7 @@ func login(userName: String, password: String) async -> Data {
     let userData = LoginData(userName: userName, password: password)
     guard let encoded = try? JSONEncoder().encode(userData) else { return Data() }
     
-    let url = URL(string: "http://172.20.57.25:3000/login")!
+    let url = URL(string: "http://localhost:3000/login")!
     var request = URLRequest(url: url)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "POST"
@@ -66,7 +66,7 @@ func update(userName: String, token: String, name: String, status: String?, imag
     let userData = updateUserData(name: name, status: status, picture: images)
     guard let encoded = try? JSONEncoder().encode(userData) else { return Data() }
     print("userData: \(userData)")
-    let url = URL(string: "http://172.20.57.25:3000/users/\(userName)")!
+    let url = URL(string: "http://localhost:3000/users/\(userName)")!
     var request = URLRequest(url: url)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.setValue(token, forHTTPHeaderField: "Authorization")
@@ -85,7 +85,7 @@ func update(userName: String, token: String, name: String, status: String?, imag
 //----------------------------------------------------------------
 //search user
 func search(userName: String, token: String) async -> Data? {
-    let url = URL(string: "http://172.20.57.25:3000/users/\(userName)")!
+    let url = URL(string: "http://localhost:3000/users/\(userName)")!
     var request = URLRequest(url: url)
     request.setValue(token, forHTTPHeaderField: "Authorization")
     request.timeoutInterval = 20
@@ -102,7 +102,7 @@ func search(userName: String, token: String) async -> Data? {
 //----------------------------------------------------------------
 //fetch message
 func fetchMessage(sender: String, receiver: String, token: String) async -> Data {
-    guard let url = URL(string: "http://172.20.57.25:3000/message/\(sender)&\(receiver)") else { return Data() }
+    guard let url = URL(string: "http://localhost:3000/message/\(sender)&\(receiver)") else { return Data() }
     var request = URLRequest(url: url)
     request.setValue(token, forHTTPHeaderField: "Authorization")
     request.timeoutInterval = 4
@@ -117,11 +117,11 @@ func fetchMessage(sender: String, receiver: String, token: String) async -> Data
 }
 
 //send message
-func sendMessage(message: String, sender: String, receiver: String, token: String) async -> Data {
-    let messageData = MessageText(message: message)
+func sendMessage(message: String?, image: String?, sender: String, receiver: String, token: String) async -> Data {
+    let messageData = MessageText(message: message, image: image)
     guard let encoded = try? JSONEncoder().encode(messageData) else { return Data() }
     
-    let url = URL(string: "http://172.20.57.25:3000/message/\(sender)&\(receiver)")!
+    let url = URL(string: "http://localhost:3000/message/\(sender)&\(receiver)")!
     var request = URLRequest(url: url)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "POST"
@@ -138,37 +138,17 @@ func sendMessage(message: String, sender: String, receiver: String, token: Strin
 }
 
 //----------------------------------------------------------------
-//create image body for uploading
+//upload profile image
 func uploadImage(_ image: Data, userName: String) async {
-    let url = URL(string: "http://172.20.57.25:3000/upload/profile/\(userName)")!
-    var request = URLRequest.init(url: url)
-    request.httpMethod = "POST"
-    request.timeoutInterval = 10
-
     let boundary = generateBoundaryString()
-
+    let body = createBody(boundary: boundary, name: "profile_pic", fieldName: "profile_pic.jpg", image: image)
+    
+    let url = URL(string: "http://localhost:3000/upload/profile/\(userName)")!
+    var request = URLRequest.init(url: url)
     request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-
-    let imge: Data = image
-
-    let body = NSMutableData()
-
-    let fname = "profile_pic.jpg"
-    let mimetype = "image/png"
-
-    body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8, allowLossyConversion: true)!)
-    body.append("Content-Disposition:form-data; name=\"profile_pic\"\r\n\r\n".data(using: String.Encoding.utf8)!)
-    body.append("hi\r\n".data(using: String.Encoding.utf8)!)
-
-    body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8)!)
-    body.append("Content-Disposition:form-data; name=\"profile_pic\"; filename=\"\(fname)\"\r\n".data(using: String.Encoding.utf8)!)
-    body.append("Content-Type: \(mimetype)\r\n\r\n".data(using: String.Encoding.utf8)!)
-    body.append(imge)
-
-    body.append("\r\n".data(using: String.Encoding.utf8)!)
-    body.append("--\(boundary)--\r\n".data(using: String.Encoding.utf8)!)
-
+    request.httpMethod = "POST"
     request.httpBody = body as Data
+    request.timeoutInterval = 10
 
     do {
         if let encoded = request.httpBody {
@@ -181,7 +161,51 @@ func uploadImage(_ image: Data, userName: String) async {
 
 }
 
+//upload messageImage
+func uploadMessageImage(_ image: Data, id: String, sender: String, receiver: String) async {
+    let boundary = generateBoundaryString()
+    let body = createBody(boundary: boundary, name: "message_pic", fieldName: "message_pic.jpg", image: image)
+    
+    let url = URL(string: "http://localhost:3000/upload/message/\(sender)&\(receiver)&\(id)")!
+    var request = URLRequest.init(url: url)
+    request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+    request.httpMethod = "POST"
+    request.httpBody = body as Data
+    request.timeoutInterval = 10
+    
+    do {
+        if let encoded = request.httpBody {
+            let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
+            print(String(data: data, encoding: .utf8) ?? "")
+        }
+    } catch {
+        print(error.localizedDescription)
+    }
+    
+}
+
+//----------------------------------------------------------------
+//create bondary and body for uploading image
 func generateBoundaryString() -> String {
     return "Boundary-\(NSUUID().uuidString)"
 }
 
+func createBody(boundary: String, name: String, fieldName: String, image: Data) -> NSMutableData {
+    let body = NSMutableData()
+    
+    let mimetype = "image/png"
+
+    body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8, allowLossyConversion: true)!)
+    body.append("Content-Disposition:form-data; name=\"\(name)\"\r\n\r\n".data(using: String.Encoding.utf8)!)
+    body.append("hi\r\n".data(using: String.Encoding.utf8)!)
+
+    body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8)!)
+    body.append("Content-Disposition:form-data; name=\"\(name)\"; filename=\"\(fieldName)\"\r\n".data(using: String.Encoding.utf8)!)
+    body.append("Content-Type: \(mimetype)\r\n\r\n".data(using: String.Encoding.utf8)!)
+    body.append(image)
+
+    body.append("\r\n".data(using: String.Encoding.utf8)!)
+    body.append("--\(boundary)--\r\n".data(using: String.Encoding.utf8)!)
+    
+    return body
+}

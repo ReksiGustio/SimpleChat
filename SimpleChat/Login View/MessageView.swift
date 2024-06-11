@@ -5,6 +5,7 @@
 //  Created by Reksi Gustio on 09/06/24.
 //
 
+import PhotosUI
 import SwiftUI
 
 struct MessageView: View {
@@ -40,12 +41,19 @@ struct MessageView: View {
                         
                         Spacer()
                         
+                        PhotosPicker(selection: $chatsVM.pickerItem) {
+                            Image(systemName: "photo.fill")
+                                .font(.title3)
+                                .padding(10)
+                        }
+                        .onChange(of: chatsVM.pickerItem) { _ in chatsVM.loadImage() }
+                        
                         Button {
                             let trimmedText = !vm.messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                             
                             if trimmedText {
                                 Task {
-                                    await vm.sendText(text: vm.messageText, receiver: messages.receiver, displayName: messages.displayName)
+                                    await vm.sendText(text: vm.messageText, image: nil, receiver: messages.receiver, displayName: messages.displayName)
                                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
                                 }
                                 value.scrollTo(1)
@@ -54,7 +62,8 @@ struct MessageView: View {
                             Image(systemName: "paperplane.fill")
                                 .font(.title3)
                         }
-                        .padding(10)
+                        .padding([.top, .bottom, .trailing], 10)
+                        
                     } // end of hstack
                     .padding(.horizontal, 10)
                     .clipShape(.rect(cornerRadius: 15))
@@ -73,6 +82,17 @@ struct MessageView: View {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 Button("Done") { isFocused = false }
+            }
+        }
+        .fullScreenCover(item: $chatsVM.previewPhoto) { photo in
+            PhotoPreview(preview: photo, receiver: messages.displayName) { data in
+                Task {
+                    let id = UUID().uuidString
+                    let imageString = "http://localhost:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
+                    await vm.sendText(text: "", image: imageString, receiver: messages.receiver, displayName: messages.displayName)
+                    await uploadMessageImage(data, id: id, sender: vm.userName, receiver: messages.receiver)
+                    await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
+                }
             }
         }
         .onAppear {

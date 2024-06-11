@@ -14,41 +14,43 @@ struct ChatsView: View {
     var body: some View {
         NavigationSplitView {
             List(sortedMessages, selection: $chatsVM.selection) { messages in
-                NavigationLink {
-                    MessageView(vm: vm, chatsVM: chatsVM, messages: messages)
-                } label: {
-                    HStack {
-                        ZStack {
-                            Circle()
-                                .fill(.secondary)
-                                .frame(width: 44, height: 44)
-                                .padding(5)
-                            
-                            if let loadedImage = loadContactImage(messages.receiver) {
-                                loadedImage
-                                    .resizable()
-                                    .scaledToFill()
-                                    .clipShape(.circle)
+                if !messages.items.isEmpty {
+                    NavigationLink {
+                        MessageView(vm: vm, chatsVM: chatsVM, messages: messages)
+                    } label: {
+                        HStack {
+                            ZStack {
+                                Circle()
+                                    .fill(.secondary)
                                     .frame(width: 44, height: 44)
                                     .padding(5)
-                            }
-                        } // end of zstack
-                        
-                        VStack(alignment: .leading) {
-                            Text(messages.displayName)
-                                .font(.headline)
-                            Text(messages.items.last?.text ?? "")
+                                
+                                if let loadedImage = loadContactImage(messages.receiver) {
+                                    loadedImage
+                                        .resizable()
+                                        .scaledToFill()
+                                        .clipShape(.circle)
+                                        .frame(width: 44, height: 44)
+                                        .padding(5)
+                                }
+                            } // end of zstack
+                            
+                            VStack(alignment: .leading) {
+                                Text(messages.displayName)
+                                    .font(.headline)
+                                Text(messages.items.last?.image == nil ? (messages.items.last?.text ?? "") : "Image")
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            } // end of vstack
+                            
+                            Spacer()
+                            
+                            Text("\(convertDate(messages.items.last?.date ?? "").formatted(date: .omitted, time: .shortened))")
                                 .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        } // end of vstack
-                        
-                        Spacer()
-                        
-                        Text("\(convertDate(messages.items.last?.date ?? "").formatted(date: .omitted, time: .shortened))")
-                            .foregroundStyle(.secondary)
-                    } // end of hstack
-                } // end of navlink
-                .tag(messages.id)
+                        } // end of hstack
+                    } // end of navlink
+                    .tag(messages.id)
+                } // end if
             } // end of list
             .navigationTitle("Chats")
             .toolbar {

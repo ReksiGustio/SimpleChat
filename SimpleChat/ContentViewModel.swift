@@ -71,6 +71,7 @@ extension ContentView {
             }
         }
         @Published var messageText = ""
+        @Published var imagePreview: PreviewPhoto?
         
         //used for showing an alert after REST API used
         @Published private(set) var message = ""
@@ -286,6 +287,24 @@ extension ContentView {
             
         }
         
+        //download one preview photo
+        func downloadPreviewPhoto(url: String) async -> PreviewPhoto? {
+            guard let imageURL = URL(string: url) else { return nil }
+            let request = URLRequest(url: imageURL)
+                
+            do {
+                let (data, _) = try await URLSession.shared.data(for: request)
+                if let UIImage = UIImage(data: data) {
+                    let image = Image(uiImage: UIImage)
+                    return PreviewPhoto(photo: image, data: data)
+                }
+            } catch {
+                print(error.localizedDescription)
+                return nil
+            }
+            return nil
+        }
+        
         //----------------------------------------------------------------
         //get message
         func fetchMessageByUsername(receiver: String, displayName: String) async {
@@ -302,7 +321,7 @@ extension ContentView {
                         var messages = Messages(receiver: receiver, displayName: displayName)
                         messages.items = data.data
                         if let lastDate = data.data.last?.date {
-                            messages.lastDate = dateFormatter.date(from: lastDate)!
+                            messages.lastDate = dateFormatter.date(from: lastDate) ?? .now
                         }
                         
                         for _ in allMessages {
@@ -318,9 +337,9 @@ extension ContentView {
         } // end of get message func
         
         //send message
-        func sendText(text: String, receiver: String, displayName: String) async {
+        func sendText(text: String?, image: String?, receiver: String, displayName: String) async {
             Task {
-                let tempResponse = await sendMessage(message: text, sender: userName, receiver: receiver, token: token)
+                let tempResponse = await sendMessage(message: text, image: image, sender: userName, receiver: receiver, token: token)
                 
                 if !tempResponse.isEmpty {
                     await fetchMessageByUsername(receiver: receiver, displayName: displayName)
