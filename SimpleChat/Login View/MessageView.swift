@@ -6,6 +6,7 @@
 //
 
 import PhotosUI
+import Combine
 import SwiftUI
 
 struct MessageView: View {
@@ -19,7 +20,7 @@ struct MessageView: View {
     }
     
     var body: some View {
-        ScrollViewReader { value in
+        ScrollViewReader { proxy in
             VStack {
                 ZStack(alignment: .center) {
                     if !vm.messageBackground.isEmpty {
@@ -38,24 +39,31 @@ struct MessageView: View {
                         LazyVStack {
                             ForEach(sortedMessages) { message in
                                 TextView(vm: vm, message: message)
+                                    .id(message)
                             } // end of foreach
                             
                             Rectangle()
                                 .fill(.clear)
                                 .frame(maxHeight: 1)
-                                .id(1)
-                                .onAppear {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                        value.scrollTo(1, anchor: .init(x: 0, y: -500))
-                                    }
-                                }
+                                
                             
-                            if let index = vm.allMessages.firstIndex(where: { $0.receiver == messages.receiver }) {
-                                TempMessageView(vm: vm, tempMessages: vm.allMessages[index].tempMessages, receiver: vm.allMessages[index].receiver, displayName: messages.displayName)
-                            }
+                                if let index = vm.allMessages.firstIndex(where: { $0.receiver == messages.receiver }) {
+                                    TempMessageView(vm: vm, tempMessages: vm.allMessages[index].tempMessages, receiver: vm.allMessages[index].receiver, displayName: messages.displayName)
+                                        
+                                }
                             
                         } // end of vstack
                         .padding()
+                        .onReceive(Just(sortedMessages)) { _ in
+                            if isOpened == false {
+                                withAnimation {
+                                    proxy.scrollTo(sortedMessages.last, anchor: .bottom)
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                    isOpened = true
+                                }
+                            }
+                        }
                         
                     } // end of scrollView
                     
@@ -83,9 +91,9 @@ struct MessageView: View {
                                 Task {
                                     await vm.sendText(text: vm.messageText, image: nil, receiver: messages.receiver, displayName: messages.displayName)
                                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    value.scrollTo(1, anchor: .init(x: 0, y: -500))
+                                    withAnimation {
+                                        proxy.scrollTo(sortedMessages.last, anchor: .bottom)
+                                    }
                                 }
                             }
                         } label: {
@@ -142,7 +150,7 @@ struct MessageView: View {
             PhotoPreview(preview: photo, receiver: messages.displayName) { data in
                 Task {
                     let id = UUID().uuidString
-                    let imageString = "http://172.20.57.25:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
+                    let imageString = "http://localhost:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
                     await vm.sendText(text: "", image: imageString, imageId: id, data: data, receiver: messages.receiver, displayName: messages.displayName)
                     await uploadMessageImage(data, id: id, sender: vm.userName, receiver: messages.receiver)
                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
@@ -150,11 +158,8 @@ struct MessageView: View {
             }
         }
         .onAppear {
-            if isOpened == false {
-                Task {
-                    await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
-                    isOpened = true
-                }
+            Task {
+                await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
             }
         }
         .onDisappear {
