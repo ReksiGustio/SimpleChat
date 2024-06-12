@@ -54,6 +54,7 @@ struct SettingsView: View {
                 
                 //logout
                 Section {
+                    NavigationLink("Set chat background") { }
                     Button("Log out") { settingsVM.showLogoutAlert = true }
                         .foregroundStyle(.red)
                 }

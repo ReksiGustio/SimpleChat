@@ -86,9 +86,6 @@ struct LogoutView: View {
         .sheet(isPresented: $logoutVM.showRegister) {
             RegisterView(vm: vm, logoutVM: logoutVM, logoutView: self)
         }
-        .onAppear {
-            if vm.rememberUser { verifyLogin() }
-        }
     } // end of body
 } // end of logoutview
 

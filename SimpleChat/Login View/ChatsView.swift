@@ -65,13 +65,8 @@ struct ChatsView: View {
             } // add new chat
             .sheet(item: $vm.chatContacts) { contacts in
                 NewChatView(vm: vm, contacts: contacts) { selectedUser in
-                    if UIDevice.current.userInterfaceIdiom == .phone {
-                        chatsVM.user = selectedUser
-                        chatsVM.selection = ""
-                    } else {
-                        chatsVM.ipadUser = selectedUser
-                        chatsVM.selection = ""
-                    }
+                    vm.chatsUser = selectedUser
+                    chatsVM.selection = ""
                 }
             }
             .onAppear {
@@ -89,18 +84,11 @@ struct ChatsView: View {
                 }
             } // end of list
         } detail: {
-            if chatsVM.ipadUser != nil {
-                if let index = vm.allMessages.firstIndex(where: { $0.receiver == chatsVM.ipadUser?.userName }) {
+            if vm.chatsUser != nil {
+                if let index = vm.allMessages.firstIndex(where: { $0.receiver == vm.chatsUser?.userName }) {
                     MessageView(vm: vm, chatsVM: chatsVM, messages: vm.allMessages[index])
                 } else {
-                    let messages = newMessages(chatsVM.ipadUser!.userName, displayName: chatsVM.ipadUser!.name)
-                    MessageView(vm: vm, chatsVM: chatsVM, messages: messages)
-                }
-            } else if chatsVM.user != nil{
-                if let index = vm.allMessages.firstIndex(where: { $0.receiver == chatsVM.user?.userName }) {
-                    MessageView(vm: vm, chatsVM: chatsVM, messages: vm.allMessages[index])
-                } else {
-                    let messages = newMessages(chatsVM.user!.userName, displayName: chatsVM.user!.name)
+                    let messages = newMessages(vm.chatsUser!.userName, displayName: vm.chatsUser!.name)
                     MessageView(vm: vm, chatsVM: chatsVM, messages: messages)
                 }
             } else {

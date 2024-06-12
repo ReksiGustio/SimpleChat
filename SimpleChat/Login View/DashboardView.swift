@@ -17,6 +17,11 @@ struct DashboardView: View {
                 .tabItem {
                     Label("Chats", systemImage: "ellipsis.message.fill")
                 }
+                .onDisappear {
+                    if let encode = try? JSONEncoder().encode(vm.allMessages) {
+                        UserDefaults.standard.set(encode, forKey: vm.messageKey)
+                    }
+                }
             
             ContactsView(vm: vm)
                 .tabItem {

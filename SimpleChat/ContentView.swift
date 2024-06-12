@@ -14,6 +14,17 @@ struct ContentView: View {
             
             if vm.loginState == .login {
                 DashboardView(vm: vm)
+                    .onAppear {
+                        vm.user = vm.loadData(vm.saveKey, dataType: User.empty)
+                        if vm.user.userName.isEmpty {
+                            vm.loginState = .logout
+                        } else {
+                            Task {
+                                await vm.loginUser()
+                            }
+                        }
+                        
+                    }
             } else {
                 LogoutView(vm: vm)
                     .allowsHitTesting(vm.loginState != .loading)

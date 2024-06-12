@@ -28,7 +28,7 @@ extension ContentView {
         }
         
         //used for login page
-        @Published var loginState = LoginState.logout
+        @Published var loginState = LoginState.login
         @Published var showPassword = false
         @Published var rememberUser = false {
             didSet {
@@ -39,7 +39,13 @@ extension ContentView {
         //store current user data
         @Published var title = ""
         @Published private(set) var token = ""
-        @Published var user = User.empty
+        @Published var user = User.empty {
+            didSet {
+                if let encoded = try? JSONEncoder().encode(user) {
+                    UserDefaults.standard.set(encoded, forKey: saveKey)
+                }
+            }
+        }
         @Published var userImage = Data() {
             didSet {
                 UserDefaults.standard.setValue(userImage, forKey: imageKey)
@@ -51,7 +57,7 @@ extension ContentView {
         @Published var contacts = [User.empty]  {
             didSet {
                 if let encoded = try? JSONEncoder().encode(contacts) {
-                    UserDefaults.standard.set(encoded, forKey: saveKey)
+                    UserDefaults.standard.set(encoded, forKey: contactsKey)
                 }
             }
         }
@@ -72,6 +78,7 @@ extension ContentView {
         }
         @Published var messageText = ""
         @Published var imagePreview: PreviewPhoto?
+        @Published var chatsUser: User?
         
         //used for showing an alert after REST API used
         @Published private(set) var message = ""
@@ -80,8 +87,10 @@ extension ContentView {
         
         //used for load data locally
         var saveKey: String { user.userName }
+        var contactsKey: String { "\(user.userName)-contacts" }
         var contactsPictureKey: String { "\(user.userName)-contactsPicture" }
         var imageKey: String { "\(user.userName)-profile" }
+        var messageKey: String { "\(user.userName)-messages" }
         
         //initializer
         init() {
@@ -127,8 +136,13 @@ extension ContentView {
         //----------------------------------------------------------------
         //login user
         func loginUser() async {
-            loginState = .loading
             message = ""
+            
+            allMessages = loadData(messageKey, dataType: [Messages]())
+            contacts = loadData(contactsKey, dataType: [User]())
+            contactsPicture = loadData(contactsPictureKey, dataType: [UserImage]())
+            timer = Timer.publish(every: 5, tolerance: 2, on: .main, in: .common).autoconnect()
+            
             Task {
                 let tempResponse = await login(userName: userName, password: password)
                 
@@ -143,13 +157,9 @@ extension ContentView {
                 if let data = try? JSONDecoder().decode(ResponseData<LoginSuccessData>.self, from: tempResponse) {
                     user = data.data.user
                     token = data.data.token
-                    allMessages = []
-                    contacts = loadContacts(saveKey)
-                    contactsPicture = loadContactsPicture(contactsPictureKey)
                     if let imageURL = data.data.user.picture {
                         userImage = await downloadImage(url: imageURL) ?? Data()
                     }
-                    timer = Timer.publish(every: 5, tolerance: 2, on: .main, in: .common).autoconnect()
                     await updateContacts()
                     loginState = .login
                     await updateContactsImage()
@@ -162,24 +172,14 @@ extension ContentView {
             }
         } // end of login func
         
-        func loadContacts(_ key: String) -> [User] {
+        func loadData<T: Codable>(_ key: String, dataType: T) -> T {
             if let data = UserDefaults.standard.data(forKey: key) {
-                if let decodedData = try? JSONDecoder().decode([User].self, from: data) {
+                if let decodedData = try? JSONDecoder().decode(T.self, from: data) {
                     return decodedData
                 }
             }
             
-            return []
-        } // end of load contacts func
-        
-        func loadContactsPicture(_ key: String) -> [UserImage] {
-            if let data = UserDefaults.standard.data(forKey: key) {
-                if let decodedData = try? JSONDecoder().decode([UserImage].self, from: data) {
-                    return decodedData
-                }
-            }
-            
-            return []
+            return dataType
         } // end of load contacts func
         
         func loadUserPicture(_ key: String) -> Data {
@@ -353,6 +353,7 @@ extension ContentView {
         func logout() {
             timer.upstream.connect().cancel()
             user = User.empty
+            allMessages = []
             token = ""
             message = ""
             subMessage = ""

@@ -69,7 +69,7 @@ struct User: Codable, Identifiable, Hashable {
     var status: String?
     var picture: String?
     
-    static let empty = User(id: 0, name: "dummy name", userName: "dummy username", status: "Available", picture: nil)
+    static let empty = User(id: 0, name: "dummy name", userName: "", status: "Available", picture: nil)
 }
 
 //struct that store local image data {
@@ -109,9 +109,9 @@ struct PreviewPhoto: Identifiable {
 }
     
 //struct that contains messages
-struct Messages: Identifiable, Hashable {
+struct Messages: Codable, Identifiable, Hashable {
     
-    let id = UUID().uuidString
+    var id = UUID().uuidString
     var receiver: String
     var displayName =  ""
     var lastDate = Date.now

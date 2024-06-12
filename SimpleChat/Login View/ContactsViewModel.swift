@@ -53,4 +53,14 @@ extension ContactsView {
         return nil
     }
     
+    func newMessages(_ name: String, displayName: String) -> Messages {
+        let messages = Messages(receiver: name, displayName: displayName)// add displayname
+        vm.allMessages.append(messages)
+        if let index = vm.allMessages.firstIndex(where: { $0.receiver == name }) {
+            return vm.allMessages[index]
+        }
+        
+        return Messages(receiver: "")
+    }
+    
 }

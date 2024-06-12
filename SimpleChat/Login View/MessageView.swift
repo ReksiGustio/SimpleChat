@@ -19,7 +19,7 @@ struct MessageView: View {
         ScrollViewReader { value in
             VStack {
                 ScrollView {
-                    VStack {
+                    LazyVStack {
                         ForEach(sortedMessages) { message in
                             TextView(vm: vm, message: message)
                         } // end of foreach
@@ -61,7 +61,7 @@ struct MessageView: View {
                                     await vm.sendText(text: vm.messageText, image: nil, receiver: messages.receiver, displayName: messages.displayName)
                                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                                     value.scrollTo(1, anchor: .init(x: 0, y: -500))
                                 }
                             }
@@ -136,8 +136,7 @@ struct MessageView: View {
             }
         }
         .onDisappear {
-            chatsVM.user = nil
-            chatsVM.ipadUser = nil
+            vm.chatsUser = nil
             chatsVM.selection = nil
         }
     } // end of body

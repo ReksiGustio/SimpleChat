@@ -77,6 +77,7 @@ extension LogoutView {
         let verified = matchLoginData()
         if verified {
             Task {
+                vm.loginState = .loading
                 await vm.loginUser()
                 logoutVM.showError = false
             }

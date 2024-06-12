@@ -12,8 +12,6 @@ extension ChatsView {
     // ViewModel for creating state properties
     @MainActor class ChatsVM: ObservableObject {
         @Published var selection: String?
-        @Published var user: User?
-        @Published var ipadUser: User?
         @Published var pickerItem: PhotosPickerItem?
         @Published var previewPhoto: PreviewPhoto?
         
