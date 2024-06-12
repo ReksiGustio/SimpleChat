@@ -8,15 +8,16 @@ Simple Chat is a messaging application that let you contact with other user, usi
 ## Features
 
  - Send picture and preview it.
+ - Resend the message when it failed to send.
  - Storing user contacts locally.
  - Updating status text that visible to other user.
  - Profile picture.
  - The message will only visible if the sender is added to receiver contacts.
+ - Customizable chat background.
  - Optimized for iPad as well.
 
 ## Features that yet to be implemented
 
- - Customizable chat background.
  - Read and unread messages.
  - Local notifications.
  - Accessibility.

@@ -350,14 +350,51 @@ extension ContentView {
         } // end of get message func
         
         //send message
-        func sendText(text: String?, image: String?, receiver: String, displayName: String) async {
+        func sendText(text: String?, image: String?, imageId: String? = nil, data: Data? = nil, receiver: String, displayName: String) async {
+            
+            //create temporary message
+            if data == nil { createTemporaryText(text: text, receiver: receiver) }
+            else { 
+                createTemporaryImage(text: text, imageId: imageId, image: image, imageData: data, receiver: receiver)
+            }
+            
             Task {
                 let tempResponse = await sendMessage(message: text, image: image, sender: userName, receiver: receiver, token: token)
                 
                 if !tempResponse.isEmpty {
                     await fetchMessageByUsername(receiver: receiver, displayName: displayName)
+                    
+                    if let index = allMessages.firstIndex(where: { $0.receiver == receiver }) {
+                        if let tempIndex = allMessages[index].tempMessages.firstIndex(where: { $0.text == text }) {
+                            allMessages[index].tempMessages.remove(at: tempIndex)
+                        }
+                    }
+                    
+                    messageText = ""
+                } else {
+                    //when message failed to send
+                    if let index = allMessages.firstIndex(where: { $0.receiver == receiver }) {
+                        if let tempIndex = allMessages[index].tempMessages.firstIndex(where: { $0.text == text }) {
+                            allMessages[index].tempMessages[tempIndex].messageStatus = "Failed to send"
+                        }
+                    }
                     messageText = ""
                 }
+            }
+        }
+        
+        //----------------------------------------------------------------
+        //create temporary message
+        func createTemporaryText(text: String?, receiver: String) {
+            if let index = allMessages.firstIndex(where: { $0.receiver == receiver }) {
+                allMessages[index].tempMessages.append(TempMessage(text: text ?? ""))
+            }
+        }
+        
+        //create temporary message with image
+        func createTemporaryImage(text: String?, imageId: String?, image: String?, imageData: Data?, receiver: String) {
+            if let index = allMessages.firstIndex(where: { $0.receiver == receiver }) {
+                allMessages[index].tempMessages.append(TempMessage(text: text ?? "", imageId: imageId, imageURL: image, imageData: imageData))
             }
         }
         

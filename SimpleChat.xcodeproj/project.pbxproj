@@ -29,6 +29,8 @@
 		83991F272C12E7A10062C16C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83991F262C12E7A10062C16C /* Preview Assets.xcassets */; };
 		83991F2E2C12E95C0062C16C /* ResponseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83991F2D2C12E95C0062C16C /* ResponseData.swift */; };
 		83991F302C12EC0B0062C16C /* Routes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83991F2F2C12EC0B0062C16C /* Routes.swift */; };
+		839F9E222C19B8DC007516FD /* TempMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839F9E212C19B8DC007516FD /* TempMessageView.swift */; };
+		839F9E282C19C286007516FD /* TempMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839F9E272C19C286007516FD /* TempMessageViewModel.swift */; };
 		83A841902C1956C20049A6C3 /* BackgroundSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A8418F2C1956C20049A6C3 /* BackgroundSettingView.swift */; };
 		83AABE9E2C1453F500B5BF35 /* AddContactViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AABE9D2C1453F500B5BF35 /* AddContactViewModel.swift */; };
 		83AABEA02C1485E600B5BF35 /* ChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AABE9F2C1485E600B5BF35 /* ChatsView.swift */; };
@@ -61,6 +63,8 @@
 		83991F262C12E7A10062C16C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		83991F2D2C12E95C0062C16C /* ResponseData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseData.swift; sourceTree = "<group>"; };
 		83991F2F2C12EC0B0062C16C /* Routes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routes.swift; sourceTree = "<group>"; };
+		839F9E212C19B8DC007516FD /* TempMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempMessageView.swift; sourceTree = "<group>"; };
+		839F9E272C19C286007516FD /* TempMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempMessageViewModel.swift; sourceTree = "<group>"; };
 		83A8418F2C1956C20049A6C3 /* BackgroundSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSettingView.swift; sourceTree = "<group>"; };
 		83AABE9D2C1453F500B5BF35 /* AddContactViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactViewModel.swift; sourceTree = "<group>"; };
 		83AABE9F2C1485E600B5BF35 /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
@@ -88,6 +92,8 @@
 				831F1B322C155C32000AC678 /* NewChatView.swift */,
 				83AC61042C170672008B0461 /* NewChatViewModel.swift */,
 				831F1B2E2C151E0B000AC678 /* MessageView.swift */,
+				839F9E212C19B8DC007516FD /* TempMessageView.swift */,
+				839F9E272C19C286007516FD /* TempMessageViewModel.swift */,
 				833B887F2C17D880004B9258 /* PhotoPreview.swift */,
 				831F1B302C153EBF000AC678 /* TextView.swift */,
 				8326170C2C18721D000FEA41 /* ImageView.swift */,
@@ -224,6 +230,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				839F9E222C19B8DC007516FD /* TempMessageView.swift in Sources */,
 				8326170D2C18721D000FEA41 /* ImageView.swift in Sources */,
 				83991F222C12E79F0062C16C /* ContentView.swift in Sources */,
 				83991F302C12EC0B0062C16C /* Routes.swift in Sources */,
@@ -239,6 +246,7 @@
 				83AABEA02C1485E600B5BF35 /* ChatsView.swift in Sources */,
 				833B88802C17D880004B9258 /* PhotoPreview.swift in Sources */,
 				8360DDC12C13EB410035C815 /* DashboardView.swift in Sources */,
+				839F9E282C19C286007516FD /* TempMessageViewModel.swift in Sources */,
 				8360DDC32C13EBE70035C815 /* SettingsView.swift in Sources */,
 				83A841902C1956C20049A6C3 /* BackgroundSettingView.swift in Sources */,
 				83991F202C12E79F0062C16C /* SimpleChatApp.swift in Sources */,

@@ -102,6 +102,22 @@ struct BackgroundSettingView: View {
                         } // end of hstack
                         .padding()
                         
+                        HStack {
+                            Text("The background picture will be streched depending on your device size, be careful.")
+                                .padding(10)
+                                .background(.primary.opacity(0.1))
+                                .background(Color(uiColor: .systemBackground))
+                                .clipShape(.rect(cornerRadius: 15))
+                                .padding(.bottom, 10)
+                            
+                            Spacer()
+                            
+                            Rectangle()
+                                .fill(.clear)
+                                .frame(maxWidth: 10, maxHeight: 40)
+                        } // end of hstack
+                        .padding()
+                        
                         Spacer()
                     } // end of vstack
                 } // end of zstack
@@ -124,7 +140,7 @@ struct BackgroundSettingView: View {
                 
                 Button("Save changes") {
                     if processedImage != nil {
-                        vm.messageBackground = processedImage?.jpegData(compressionQuality: 0.0) ?? Data()
+                        vm.messageBackground = processedImage?.preparingThumbnail(of: CGSize(width: 1024, height: 1024))?.jpegData(compressionQuality: 1.0) ?? Data()
                     } else {
                         vm.messageBackground = Data()
                     }

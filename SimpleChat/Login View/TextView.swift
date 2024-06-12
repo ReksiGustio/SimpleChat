@@ -34,7 +34,17 @@ struct TextView: View {
                                 } // end of zstack
                                 .frame(maxWidth: 300, maxHeight: 250)
                             } else if phase.error != nil {
-                                Label("?", systemImage: "photo")
+                                VStack {
+                                    Image(systemName: "photo")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100, height: 100)
+                                    
+                                    Text("Download failed")
+                                }
+                                .padding()
+                                .backgroundStyle(.ultraThinMaterial)
+                                .padding(.leading, 10)
                             } else {
                                 ProgressView()
                                     .controlSize(.large)
@@ -61,7 +71,9 @@ struct TextView: View {
                     
                     Text(segmentedDate(message.date))
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .fontWeight(vm.messageBackground.isEmpty ? .regular : .bold)
+                        .foregroundStyle(vm.messageBackground.isEmpty ? .secondary : .primary)
+                        .shadow(radius: vm.messageBackground.isEmpty ? 0 : 5)
 
                 } // end of vstack
                 .padding(.bottom, 10)
@@ -101,7 +113,17 @@ struct TextView: View {
                                 } // end of zstack
                                 .frame(maxWidth: 300, maxHeight: 250)
                             } else if phase.error != nil {
-                                Label("?", systemImage: "photo")
+                                VStack {
+                                    Image(systemName: "photo")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100, height: 100)
+                                    
+                                    Text("Download failed")
+                                }
+                                .padding()
+                                .backgroundStyle(.ultraThinMaterial)
+                                .padding(.trailing, 10)
                             } else {
                                 ProgressView()
                                     .controlSize(.large)
@@ -128,7 +150,9 @@ struct TextView: View {
                     
                     Text(segmentedDate(message.date))
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .fontWeight(vm.messageBackground.isEmpty ? .regular : .bold)
+                        .foregroundStyle(vm.messageBackground.isEmpty ? .secondary : .primary)
+                        .shadow(radius: vm.messageBackground.isEmpty ? 0 : 5)
   
                 } // end of vstack
                 .padding(.bottom, 10)

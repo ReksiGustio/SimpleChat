@@ -21,12 +21,16 @@ struct MessageView: View {
     var body: some View {
         ScrollViewReader { value in
             VStack {
-                ZStack {
+                ZStack(alignment: .center) {
                     if !vm.messageBackground.isEmpty {
                         if let backgroundImage {
+                            Color.secondary
+                            
                             backgroundImage
-                                .resizable()
-                                .scaledToFill()
+                                .resizable(resizingMode: .stretch)
+                                .clipped()
+                        } else {
+                            Color.clear
                         }
                     }
                     
@@ -46,9 +50,15 @@ struct MessageView: View {
                                     }
                                 }
                             
+                            if let index = vm.allMessages.firstIndex(where: { $0.receiver == messages.receiver }) {
+                                TempMessageView(vm: vm, tempMessages: vm.allMessages[index].tempMessages, receiver: vm.allMessages[index].receiver, displayName: messages.displayName)
+                            }
+                            
                         } // end of vstack
                         .padding()
+                        
                     } // end of scrollView
+                    
                 } // end of zstack
                 
                 ZStack {
@@ -94,7 +104,6 @@ struct MessageView: View {
                     .padding()
                 } // end of ztack
             } // end of vstack
-            .onAppear { value.scrollTo(1) }
         } // end of scrollviewreader
         .navigationTitle(messages.displayName)
         .navigationBarTitleDisplayMode(.inline)
@@ -134,7 +143,7 @@ struct MessageView: View {
                 Task {
                     let id = UUID().uuidString
                     let imageString = "http://172.20.57.25:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
-                    await vm.sendText(text: "", image: imageString, receiver: messages.receiver, displayName: messages.displayName)
+                    await vm.sendText(text: "", image: imageString, imageId: id, data: data, receiver: messages.receiver, displayName: messages.displayName)
                     await uploadMessageImage(data, id: id, sender: vm.userName, receiver: messages.receiver)
                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
                 }

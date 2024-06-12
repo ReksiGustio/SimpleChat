@@ -116,6 +116,7 @@ struct Messages: Codable, Identifiable, Hashable {
     var displayName =  ""
     var lastDate = Date.now
     var items = [Message]()
+    var tempMessages = [TempMessage]()
     
     static let example = Messages(receiver: "TestUser", displayName: "Dummy Name", lastDate: .now.addingTimeInterval(-5000), items: [
         Message(id: 0, userRelated: "TestSender, TestUser", text: "message 1", image: nil, date: ""),
@@ -124,3 +125,15 @@ struct Messages: Codable, Identifiable, Hashable {
     ])
 }
 
+//----------------------------------------------------------------
+//temporary message
+struct TempMessage: Codable, Hashable, Identifiable {
+    var id = UUID()
+    var text = ""
+    var imageId: String?
+    var imageURL: String?
+    var imageData: Data?
+    var messageStatus = "Sending"
+    
+    static let example = TempMessage(text: "Mas Anies Mas Anies")
+}
