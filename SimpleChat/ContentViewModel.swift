@@ -11,7 +11,7 @@ extension ContentView {
     // ViewModel for creating state properties
     @MainActor class VM: ObservableObject {
         enum LoginState {
-            case login, logout, loading
+            case login, logout, loading, opening
         }
     
         //used for register page
@@ -28,7 +28,7 @@ extension ContentView {
         }
         
         //used for login page
-        @Published var loginState = LoginState.login
+        @Published var loginState = LoginState.opening
         @Published var showPassword = false
         @Published var rememberUser = false {
             didSet {
@@ -79,6 +79,11 @@ extension ContentView {
         @Published var messageText = ""
         @Published var imagePreview: PreviewPhoto?
         @Published var chatsUser: User?
+        @Published var messageBackground = Data() {
+            didSet {
+                UserDefaults.standard.set(messageBackground, forKey: "background")
+            }
+        }
         
         //used for showing an alert after REST API used
         @Published private(set) var message = ""
@@ -86,7 +91,7 @@ extension ContentView {
         @Published var showMessage = false
         
         //used for load data locally
-        var saveKey: String { user.userName }
+        var saveKey = "userData"
         var contactsKey: String { "\(user.userName)-contacts" }
         var contactsPictureKey: String { "\(user.userName)-contactsPicture" }
         var imageKey: String { "\(user.userName)-profile" }
@@ -94,7 +99,13 @@ extension ContentView {
         
         //initializer
         init() {
+            if let data = UserDefaults.standard.data(forKey: saveKey) {
+                if let decodedData = try? JSONDecoder().decode(User.self, from: data) {
+                    user = decodedData
+                }
+            }
             userName = UserDefaults.standard.string(forKey: "name") ?? ""
+            messageBackground = UserDefaults.standard.data(forKey: "background") ?? Data()
             rememberUser = UserDefaults.standard.bool(forKey: "rememberUser")
             if rememberUser {
                 password = UserDefaults.standard.string(forKey: "password") ?? ""
@@ -137,7 +148,6 @@ extension ContentView {
         //login user
         func loginUser() async {
             message = ""
-            
             allMessages = loadData(messageKey, dataType: [Messages]())
             contacts = loadData(contactsKey, dataType: [User]())
             contactsPicture = loadData(contactsPictureKey, dataType: [UserImage]())
@@ -150,13 +160,16 @@ extension ContentView {
                     message = "Error: Request timed out"
                     subMessage = "Check your internet connection and try again."
                     showMessage = true
-                    loginState = .logout
+                    if user.userName.isEmpty { loginState = .logout }
                     return
                 }
                 
                 if let data = try? JSONDecoder().decode(ResponseData<LoginSuccessData>.self, from: tempResponse) {
                     user = data.data.user
                     token = data.data.token
+                    allMessages = loadData(messageKey, dataType: [Messages]())
+                    contacts = loadData(contactsKey, dataType: [User]())
+                    contactsPicture = loadData(contactsPictureKey, dataType: [UserImage]())
                     if let imageURL = data.data.user.picture {
                         userImage = await downloadImage(url: imageURL) ?? Data()
                     }
@@ -167,7 +180,7 @@ extension ContentView {
                 else if let data = try? JSONDecoder().decode(Response.self, from: tempResponse) {
                     message = data.message
                     showMessage = true
-                    loginState = .logout
+                    if user.userName.isEmpty { loginState = .logout }
                 }
             }
         } // end of login func

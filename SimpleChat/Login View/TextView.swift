@@ -47,7 +47,8 @@ struct TextView: View {
                     } else {
                         Text(message.text)
                             .padding(10)
-                            .background(.primary.opacity(0.05))
+                            .background(.primary.opacity(0.1))
+                            .background(Color(uiColor: .systemBackground))
                             .clipShape(.rect(cornerRadius: 15))
                             .contextMenu {
                                 Button {
@@ -113,7 +114,8 @@ struct TextView: View {
                     } else {
                         Text(message.text)
                             .padding(10)
-                            .background(.blue.opacity(0.5))
+                            .background(.blue.opacity(0.8))
+                            .background(.white)
                             .clipShape(.rect(cornerRadius: 15))
                             .contextMenu {
                                 Button {

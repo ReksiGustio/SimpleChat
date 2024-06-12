@@ -14,29 +14,42 @@ struct MessageView: View {
     @State private var isOpened = false
     @FocusState private var isFocused: Bool
     var messages: Messages
+    var backgroundImage: Image? {
+        Image(uiImage: UIImage(data: vm.messageBackground) ?? UIImage())
+    }
     
     var body: some View {
         ScrollViewReader { value in
             VStack {
-                ScrollView {
-                    LazyVStack {
-                        ForEach(sortedMessages) { message in
-                            TextView(vm: vm, message: message)
-                        } // end of foreach
-                        
-                        Rectangle()
-                            .fill(.clear)
-                            .frame(maxHeight: 1)
-                            .id(1)
-                            .onAppear {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    value.scrollTo(1, anchor: .init(x: 0, y: -500))
+                ZStack {
+                    if !vm.messageBackground.isEmpty {
+                        if let backgroundImage {
+                            backgroundImage
+                                .resizable()
+                                .scaledToFill()
+                        }
+                    }
+                    
+                    ScrollView {
+                        LazyVStack {
+                            ForEach(sortedMessages) { message in
+                                TextView(vm: vm, message: message)
+                            } // end of foreach
+                            
+                            Rectangle()
+                                .fill(.clear)
+                                .frame(maxHeight: 1)
+                                .id(1)
+                                .onAppear {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        value.scrollTo(1, anchor: .init(x: 0, y: -500))
+                                    }
                                 }
-                            }
-                        
-                    } // end of vstack
-                    .padding()
-                } // end of scrollView
+                            
+                        } // end of vstack
+                        .padding()
+                    } // end of scrollView
+                } // end of zstack
                 
                 ZStack {
                     HStack(alignment: .bottom) {
@@ -98,8 +111,8 @@ struct MessageView: View {
                                 .clipShape(.circle)
                         }
                     }
-                    .frame(width: 44, height: 44)
-                    .padding(.trailing, 5)
+                    .frame(maxWidth: 44, maxHeight: 44)
+                    .padding([.trailing, .bottom], 5)
                     
                     VStack(alignment: .leading) {
                         Text(messages.displayName)
