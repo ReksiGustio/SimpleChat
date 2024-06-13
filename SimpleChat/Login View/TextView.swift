@@ -85,6 +85,7 @@ struct TextView: View {
                     .frame(maxWidth: 10)
                 
             } // end of hstack
+            .background(.blue.opacity(message.read != "read" ? 0.1 : 0))
         } else {
             HStack {
                 Rectangle()
@@ -148,18 +149,23 @@ struct TextView: View {
                             }
                     } // end if
                     
-                    Text(segmentedDate(message.date))
-                        .font(.subheadline)
-                        .fontWeight(vm.messageBackground.isEmpty ? .regular : .bold)
-                        .foregroundStyle(vm.messageBackground.isEmpty ? .secondary : .primary)
-                        .shadow(radius: vm.messageBackground.isEmpty ? 0 : 5)
+                    HStack{
+                        Text(segmentedDate(message.date))
+                        
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(message.read == "read" ? .blue : (vm.messageBackground.isEmpty ? .secondary : .primary))
+                    }
+                    .font(.subheadline)
+                    .fontWeight(vm.messageBackground.isEmpty ? .regular : .bold)
+                    .foregroundStyle(vm.messageBackground.isEmpty ? .secondary : .primary)
+                    .shadow(radius: vm.messageBackground.isEmpty ? 0 : 5)
   
                 } // end of vstack
                 .padding(.bottom, 10)
                 
             } // end of hstack
             .fullScreenCover(item: $vm.imagePreview) { preview in
-                ImageView(image: preview.photo)
+                ImageView(image: preview.photo, data: preview.data)
                     .onDisappear {
                         vm.imagePreview = nil
                     }
@@ -189,5 +195,5 @@ struct TextView: View {
 } // end of textview
 
 #Preview {
-    TextView(vm: ContentView.VM(), message: Message(id: 0, userRelated: "", text: "", image: "", date: ""))
+    TextView(vm: ContentView.VM(), message: Message(id: 0, userRelated: "", text: "p balap", image: "", read: "unread", date: ""))
 }

@@ -13,6 +13,7 @@ struct ImageView: View {
     @State private var currentZoom = 0.0
     @State private var totalZoom = 1.0
     let image: Image
+    let data: Data
     
     var body: some View {
         NavigationStack {
@@ -48,6 +49,20 @@ struct ImageView: View {
                         ToolbarItem(placement: .topBarLeading) {
                             Button("Dismiss") { dismiss() }
                         }
+                        
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Menu {
+                                Button("Save image") {
+                                    if !data.isEmpty {
+                                        save()
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: "ellipsis.circle")
+                                    .tint(.primary)
+                                
+                            }
+                        }
                     }
             }
             .simultaneousGesture(
@@ -68,8 +83,23 @@ struct ImageView: View {
             .navigationBarTitleDisplayMode(.inline)
         } // end of navstack
     } // end of body
+    
+    @MainActor func save() {
+        guard let processedImage = UIImage(data: data) else { return }
+        
+        let imageSaver = ImageSaver()
+        imageSaver.successHandler = {
+            print("Success!")
+        }
+        imageSaver.errorHandler = {
+            print("Oops! \($0.localizedDescription)")
+        }
+        
+        imageSaver.writeToPhotoAlbum(image: processedImage)
+    }
+    
 } // end of imageview
 
 #Preview {
-    ImageView(image: Image(systemName: "cross.circle"))
+    ImageView(image: Image(systemName: "cross.circle"), data: Data())
 }

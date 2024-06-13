@@ -15,6 +15,11 @@ struct TempMessageView: View {
     
     var body: some View {
         VStack {
+            if !tempMessages.isEmpty {
+                Text("Pending Message")
+                    .foregroundStyle(vm.messageBackground.isEmpty ? .secondary : .primary)
+            }
+            
             ForEach(tempMessages) { message in
                 HStack {
                     Rectangle()
@@ -29,38 +34,43 @@ struct TempMessageView: View {
                     VStack(alignment: .trailing) {
                         if message.text.isEmpty {
                             if let image = convertImage(message.imageData)  {
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(maxWidth: 300, maxHeight: 250)
-                                    .clipShape(.rect(cornerRadius: 20))
-                                    .contextMenu {
-                                        Button(role: .destructive) {
-                                            deleteImage(id: message.imageId ?? "", receiver: receiver)
-                                        } label: {
-                                            Label("Delete message", systemImage: "trash.fill")
-                                                .tint(.red)
-                                        }
-                                        
-                                        Button {
-                                            Task {
-                                                await resendImage(id: message.imageId, imageUrl: message.imageURL, data: message.imageData, receiver: receiver, displayName: displayName)
+                                ZStack(alignment: .bottomTrailing) {
+                                    Color.clear
+                                    
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                        .clipShape(.rect(cornerRadius: 20))
+                                        .contextMenu {
+                                            Button(role: .destructive) {
+                                                deleteImage(id: message.imageId ?? "", receiver: receiver)
+                                            } label: {
+                                                Label("Delete message", systemImage: "trash.fill")
+                                                    .tint(.red)
                                             }
-                                        } label: {
-                                            Label("Resend", systemImage: "paperplane.fill")
+                                            
+                                            
+                                            Button {
+                                                Task {
+                                                    await resendImage(id: message.imageId, imageUrl: message.imageURL, data: message.imageData, receiver: receiver, displayName: displayName)
+                                                }
+                                            } label: {
+                                                Label("Resend", systemImage: "paperplane.fill")
+                                            }
+                                            
                                         }
-                                        
-                                    }
-                            }
+                                } // end of zstack
+                                .frame(maxWidth: 300, maxHeight: 250)
+                            } // end if
                         } else {
                             Text(message.text)
                                 .padding(10)
-                                .background(.blue.opacity(0.8))
+                                .background(.blue.opacity(message.messageStatus.hasPrefix("S") ? 0.8 : 0.5))
                                 .background(.white)
                                 .clipShape(.rect(cornerRadius: 15))
                                 .contextMenu {
                                     Button(role: .destructive) {
-                                        deleteImage(id: message.imageId ?? "", receiver: receiver)
+                                        deleteText(text: message.text, receiver: receiver)
                                     } label: {
                                         Label("Delete message", systemImage: "trash.fill")
                                     }

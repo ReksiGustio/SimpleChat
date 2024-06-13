@@ -18,7 +18,6 @@
 		8360DDC82C13ED1F0035C815 /* LogoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8360DDC72C13ED1F0035C815 /* LogoutView.swift */; };
 		8360DDCA2C13F1F50035C815 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8360DDC92C13F1F50035C815 /* ProfileView.swift */; };
 		8360DDCC2C1406640035C815 /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8360DDCB2C1406640035C815 /* ContactsView.swift */; };
-		8360DDCE2C141E180035C815 /* ContactsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8360DDCD2C141E180035C815 /* ContactsViewModel.swift */; };
 		8360DDD02C14214C0035C815 /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8360DDCF2C14214C0035C815 /* AddContactView.swift */; };
 		83693C352C1336080035292E /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83693C342C1336080035292E /* ContentViewModel.swift */; };
 		83693C392C134FF00035292E /* LogoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83693C382C134FF00035292E /* LogoutViewModel.swift */; };
@@ -32,10 +31,10 @@
 		839F9E222C19B8DC007516FD /* TempMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839F9E212C19B8DC007516FD /* TempMessageView.swift */; };
 		839F9E282C19C286007516FD /* TempMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839F9E272C19C286007516FD /* TempMessageViewModel.swift */; };
 		83A841902C1956C20049A6C3 /* BackgroundSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A8418F2C1956C20049A6C3 /* BackgroundSettingView.swift */; };
-		83AABE9E2C1453F500B5BF35 /* AddContactViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AABE9D2C1453F500B5BF35 /* AddContactViewModel.swift */; };
 		83AABEA02C1485E600B5BF35 /* ChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AABE9F2C1485E600B5BF35 /* ChatsView.swift */; };
 		83AC61052C170672008B0461 /* NewChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AC61042C170672008B0461 /* NewChatViewModel.swift */; };
 		83AC61072C170812008B0461 /* ChatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AC61062C170812008B0461 /* ChatsViewModel.swift */; };
+		83CAA42E2C1AA9E00074573E /* SelectLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83CAA42D2C1AA9E00074573E /* SelectLocationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,7 +50,6 @@
 		8360DDC72C13ED1F0035C815 /* LogoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutView.swift; sourceTree = "<group>"; };
 		8360DDC92C13F1F50035C815 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		8360DDCB2C1406640035C815 /* ContactsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsView.swift; sourceTree = "<group>"; };
-		8360DDCD2C141E180035C815 /* ContactsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewModel.swift; sourceTree = "<group>"; };
 		8360DDCF2C14214C0035C815 /* AddContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactView.swift; sourceTree = "<group>"; };
 		83693C342C1336080035292E /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		83693C382C134FF00035292E /* LogoutViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutViewModel.swift; sourceTree = "<group>"; };
@@ -66,10 +64,10 @@
 		839F9E212C19B8DC007516FD /* TempMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempMessageView.swift; sourceTree = "<group>"; };
 		839F9E272C19C286007516FD /* TempMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempMessageViewModel.swift; sourceTree = "<group>"; };
 		83A8418F2C1956C20049A6C3 /* BackgroundSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSettingView.swift; sourceTree = "<group>"; };
-		83AABE9D2C1453F500B5BF35 /* AddContactViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactViewModel.swift; sourceTree = "<group>"; };
 		83AABE9F2C1485E600B5BF35 /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
 		83AC61042C170672008B0461 /* NewChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChatViewModel.swift; sourceTree = "<group>"; };
 		83AC61062C170812008B0461 /* ChatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsViewModel.swift; sourceTree = "<group>"; };
+		83CAA42D2C1AA9E00074573E /* SelectLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectLocationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,10 +95,9 @@
 				833B887F2C17D880004B9258 /* PhotoPreview.swift */,
 				831F1B302C153EBF000AC678 /* TextView.swift */,
 				8326170C2C18721D000FEA41 /* ImageView.swift */,
+				83CAA42D2C1AA9E00074573E /* SelectLocationView.swift */,
 				8360DDCB2C1406640035C815 /* ContactsView.swift */,
-				8360DDCD2C141E180035C815 /* ContactsViewModel.swift */,
 				8360DDCF2C14214C0035C815 /* AddContactView.swift */,
-				83AABE9D2C1453F500B5BF35 /* AddContactViewModel.swift */,
 				8360DDC22C13EBE70035C815 /* SettingsView.swift */,
 				831F1B362C157664000AC678 /* SettingsViewModel.swift */,
 				8360DDC92C13F1F50035C815 /* ProfileView.swift */,
@@ -238,7 +235,6 @@
 				8360DDCC2C1406640035C815 /* ContactsView.swift in Sources */,
 				83693C392C134FF00035292E /* LogoutViewModel.swift in Sources */,
 				831F1B2F2C151E0B000AC678 /* MessageView.swift in Sources */,
-				83AABE9E2C1453F500B5BF35 /* AddContactViewModel.swift in Sources */,
 				8360DDD02C14214C0035C815 /* AddContactView.swift in Sources */,
 				83AC61072C170812008B0461 /* ChatsViewModel.swift in Sources */,
 				831F1B332C155C32000AC678 /* NewChatView.swift in Sources */,
@@ -249,13 +245,13 @@
 				839F9E282C19C286007516FD /* TempMessageViewModel.swift in Sources */,
 				8360DDC32C13EBE70035C815 /* SettingsView.swift in Sources */,
 				83A841902C1956C20049A6C3 /* BackgroundSettingView.swift in Sources */,
+				83CAA42E2C1AA9E00074573E /* SelectLocationView.swift in Sources */,
 				83991F202C12E79F0062C16C /* SimpleChatApp.swift in Sources */,
 				83693C3B2C1356CC0035292E /* RegisterView.swift in Sources */,
 				831F1B372C157664000AC678 /* SettingsViewModel.swift in Sources */,
 				83AC61052C170672008B0461 /* NewChatViewModel.swift in Sources */,
 				8360DDCA2C13F1F50035C815 /* ProfileView.swift in Sources */,
 				831F1B312C153EBF000AC678 /* TextView.swift in Sources */,
-				8360DDCE2C141E180035C815 /* ContactsViewModel.swift in Sources */,
 				83693C352C1336080035292E /* ContentViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -393,6 +389,8 @@
 				DEVELOPMENT_TEAM = A392843C4K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allowing these to enable to fetch current user location.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Allowing these enable you to save picture to albums.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -423,6 +421,8 @@
 				DEVELOPMENT_TEAM = A392843C4K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allowing these to enable to fetch current user location.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Allowing these enable you to save picture to albums.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

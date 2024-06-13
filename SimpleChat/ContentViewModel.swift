@@ -260,6 +260,16 @@ extension ContentView {
             }
         } // end of udpatecontact
         
+        func updateRead(id: Int) async {
+            Task {
+                let tempResponse = await updateMessage(id: id, token: token)
+                
+                if tempResponse.isEmpty {
+                    //failed response here
+                }
+            }
+        } // end of update func
+        
         //----------------------------------------------------------------
         //load image
         func loadUserImage(data: Data) -> Image? {

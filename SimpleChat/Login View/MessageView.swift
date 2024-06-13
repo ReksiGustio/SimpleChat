@@ -13,6 +13,8 @@ struct MessageView: View {
     @ObservedObject var vm: ContentView.VM
     @ObservedObject var chatsVM: ChatsView.ChatsVM
     @State private var isOpened = false
+    @State private var showDoc = false
+    @State private var showLocationPicker = false
     @FocusState private var isFocused: Bool
     var messages: Messages
     var backgroundImage: Image? {
@@ -40,24 +42,29 @@ struct MessageView: View {
                             ForEach(sortedMessages) { message in
                                 TextView(vm: vm, message: message)
                                     .id(message)
+                                    .onAppear {
+                                        if message.read != "read" {
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                                Task { await vm.updateRead(id: message.id) }
+                                            }
+                                        }
+                                    }
                             } // end of foreach
-                            
-                            Rectangle()
-                                .fill(.clear)
-                                .frame(maxHeight: 1)
-                                
                             
                                 if let index = vm.allMessages.firstIndex(where: { $0.receiver == messages.receiver }) {
                                     TempMessageView(vm: vm, tempMessages: vm.allMessages[index].tempMessages, receiver: vm.allMessages[index].receiver, displayName: messages.displayName)
-                                        
-                                }
+                                } // end of temp message
+                            
+                            Rectangle()
+                                .fill(.white)
+                                .frame(maxHeight: 1)
                             
                         } // end of vstack
                         .padding()
                         .onReceive(Just(sortedMessages)) { _ in
                             if isOpened == false {
                                 withAnimation {
-                                    proxy.scrollTo(sortedMessages.last, anchor: .bottom)
+                                    proxy.scrollTo(sortedMessages.last, anchor: .top)
                                 }
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                                     isOpened = true
@@ -77,12 +84,14 @@ struct MessageView: View {
                         
                         Spacer()
                         
-                        PhotosPicker(selection: $chatsVM.pickerItem) {
-                            Image(systemName: "photo.fill")
+                        Button {
+                            showDoc.toggle()
+                            isFocused = false
+                        } label: {
+                            Image(systemName: "doc.fill")
                                 .font(.title3)
                                 .padding(10)
                         }
-                        .onChange(of: chatsVM.pickerItem) { _ in chatsVM.loadImage() }
                         
                         Button {
                             let trimmedText = !vm.messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -92,7 +101,7 @@ struct MessageView: View {
                                     await vm.sendText(text: vm.messageText, image: nil, receiver: messages.receiver, displayName: messages.displayName)
                                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
                                     withAnimation {
-                                        proxy.scrollTo(sortedMessages.last, anchor: .bottom)
+                                        proxy.scrollTo(sortedMessages.last, anchor: .top)
                                     }
                                 }
                             }
@@ -111,6 +120,48 @@ struct MessageView: View {
                     )
                     .padding()
                 } // end of ztack
+                
+                if showDoc {
+                    HStack {
+                        PhotosPicker(selection: $chatsVM.pickerItem) {
+                            VStack {
+                                Image(systemName: "photo.fill")
+                                    .font(.largeTitle)
+                                    .padding(10)
+                                
+                                Text("Send Picture")
+                            } // end of vstack
+                            .padding(10)
+                            .background(.secondary.opacity(0.3))
+                            .clipShape(.rect(cornerRadius: 15))
+                            .padding(.horizontal, 20)
+                        }
+                        .onChange(of: chatsVM.pickerItem) { _ in
+                            showDoc = false
+                            chatsVM.loadImage()
+                        }
+                        
+                        Button {
+                            showDoc = false
+                            showLocationPicker = true
+                        } label: {
+                            VStack {
+                                Image(systemName: "map.fill")
+                                    .font(.largeTitle)
+                                    .padding(10)
+                                
+                                Text("Send Location")
+                            } // end of vstack
+                            .padding(10)
+                            .background(.secondary.opacity(0.3))
+                            .clipShape(.rect(cornerRadius: 15))
+                            .padding(.horizontal, 20)
+                        }
+                        
+                    } // end of hstack
+                    
+                } // end if
+                
             } // end of vstack
         } // end of scrollviewreader
         .navigationTitle(messages.displayName)
@@ -150,12 +201,15 @@ struct MessageView: View {
             PhotoPreview(preview: photo, receiver: messages.displayName) { data in
                 Task {
                     let id = UUID().uuidString
-                    let imageString = "http://localhost:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
+                    let imageString = "http://172.20.57.25:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
                     await vm.sendText(text: "", image: imageString, imageId: id, data: data, receiver: messages.receiver, displayName: messages.displayName)
                     await uploadMessageImage(data, id: id, sender: vm.userName, receiver: messages.receiver)
                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
                 }
             }
+        }
+        .sheet(isPresented: $showLocationPicker) {
+            Text("Map picker here")
         }
         .onAppear {
             Task {

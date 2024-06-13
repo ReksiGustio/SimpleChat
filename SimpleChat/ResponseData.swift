@@ -6,6 +6,7 @@
 //  Created by Reksi Gustio on 07/06/24.
 //
 
+import CoreLocation
 import SwiftUI
 
 //this used for default response
@@ -60,6 +61,11 @@ struct updateUserData: Codable {
     let picture: String?
 }
 
+//this used for update message
+struct updateRead: Codable {
+    let read: String
+}
+
 //----------------------------------------------------------------
 //single user property
 struct User: Codable, Identifiable, Hashable {
@@ -72,13 +78,33 @@ struct User: Codable, Identifiable, Hashable {
     static let empty = User(id: 0, name: "dummy name", userName: "", status: "Available", picture: nil)
 }
 
+//
 //struct that store local image data {
 struct UserImage: Codable {
     var userName: String
     var imageData: Data?
 }
 
- //many user property
+//class to save image to gallery
+class ImageSaver: NSObject {
+    var successHandler: (() -> Void)?
+    var errorHandler: ((Error) -> Void)?
+    
+    func writeToPhotoAlbum(image: UIImage) {
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveCompleted), nil)
+    }
+    
+    @objc func saveCompleted(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            errorHandler?(error)
+        } else {
+            successHandler?()
+        }
+    }
+}
+
+//
+//many user property
 struct Users: Codable, Identifiable {
     var id = UUID()
     var users = [User]()
@@ -90,6 +116,7 @@ struct Message: Codable, Hashable, Identifiable {
     let userRelated: String
     let text: String
     let image: String?
+    let read: String
     let date: String
 }
 
@@ -119,9 +146,9 @@ struct Messages: Codable, Identifiable, Hashable {
     var tempMessages = [TempMessage]()
     
     static let example = Messages(receiver: "TestUser", displayName: "Dummy Name", lastDate: .now.addingTimeInterval(-5000), items: [
-        Message(id: 0, userRelated: "TestSender, TestUser", text: "message 1", image: nil, date: ""),
-        Message(id: 1, userRelated: "TestSender, TestUser", text: "message 2 with long text, so long that the text becomes wrapped up.", image: nil, date: ""),
-        Message(id: 2, userRelated: "TestUser, TestSender", text: "It's the receiver sending me the message", image: nil, date: ""),
+        Message(id: 0, userRelated: "TestSender, TestUser", text: "message 1", image: nil, read: "read", date: ""),
+        Message(id: 1, userRelated: "TestSender, TestUser", text: "message 2 with long text, so long that the text becomes wrapped up.", image: nil, read: "unread", date: ""),
+        Message(id: 2, userRelated: "TestUser, TestSender", text: "It's the receiver sending me the message", image: nil, read: "unread", date: ""),
     ])
 }
 
@@ -136,4 +163,36 @@ struct TempMessage: Codable, Hashable, Identifiable {
     var messageStatus = "Sending"
     
     static let example = TempMessage(text: "Mas Anies Mas Anies")
+}
+
+//----------------------------------------------------------------
+//location fetcher
+class LocationFetcher: NSObject, CLLocationManagerDelegate {
+    let manager = CLLocationManager()
+    var lastKnownLocation: CLLocationCoordinate2D?
+
+    override init() {
+        super.init()
+        manager.delegate = self
+    }
+
+    func start() {
+        manager.requestWhenInUseAuthorization()
+        manager.startUpdatingLocation()
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        lastKnownLocation = locations.first?.coordinate
+    }
+}
+
+//location data
+struct LocationCoordinate: Identifiable {
+    let id = UUID()
+    var latitude = 0.0
+    var longitude = 0.0
+    
+    var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
 }
