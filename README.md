@@ -7,8 +7,9 @@ Simple Chat is a messaging application that let you contact with other user, usi
 
 ## Features
 
- - Send picture and preview it.
+ - Send picture and location including preview.
  - Resend the message when it failed to send.
+ - Read and unread messages indicator.
  - Storing user contacts locally.
  - Updating status text that visible to other user.
  - Profile picture.
@@ -18,6 +19,5 @@ Simple Chat is a messaging application that let you contact with other user, usi
 
 ## Features that yet to be implemented
 
- - Read and unread messages.
  - Local notifications.
  - Accessibility.

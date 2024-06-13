@@ -10,14 +10,18 @@ import SwiftUI
 struct ContactsView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var vm: ContentView.VM
-    @StateObject var contactsVM = ContactsVM()
     @StateObject var chatsVM = ChatsView.ChatsVM()
+    @State private var searchText = ""
+    @State private var searchName = ""
+    @State private var user: User? = nil
+    @State private var downloadedData: Data?
+    @State private var downloadedImage: Image?
     
     var body: some View {
         NavigationSplitView {
             if vm.contacts.isEmpty {
                 NavigationLink {
-                    AddContactView(vm: vm, contactsVM: contactsVM)
+                    AddContactView(vm: vm, searchName: $searchName, user: $user, downloadedData: $downloadedData, downloadedImage: $downloadedImage)
                 } label: {
                     VStack {
                         Image(systemName: "person.crop.rectangle.stack")
@@ -40,7 +44,7 @@ struct ContactsView: View {
                                 
                                 if let image = loadContactImage(user.userName) {
                                     NavigationLink {
-                                        ImageView(image: image)
+                                        ImageView(image: image, data: Data())
                                     } label: {
                                         image
                                             .resizable()
@@ -103,10 +107,10 @@ struct ContactsView: View {
                     } // end of navlink
                 } // end of list
                 .navigationTitle("Contacts")
-                .searchable(text: $contactsVM.searchText, prompt: "Search contact name")
+                .searchable(text: $searchText, prompt: "Search contact name")
                 .toolbar {
                     NavigationLink {
-                        AddContactView(vm: vm, contactsVM: contactsVM)
+                        AddContactView(vm: vm, searchName: $searchName, user: $user, downloadedData: $downloadedData, downloadedImage: $downloadedImage)
                     } label: {
                         Label("Add contact", systemImage: "plus")
                     }
@@ -116,6 +120,44 @@ struct ContactsView: View {
             Text("Swipe from the left edge to open menu and press \"+\" button to add new contact.")
         } // end of navsplitview
     } // end of body
+    
+    var filteredContacts: [User] {
+        if searchText.isEmpty {
+            vm.contacts.sorted { $0.name < $1.name }
+        } else {
+            vm.contacts
+                .sorted { $0.name < $1.name }
+                .filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        }
+    }
+    
+    //remove one contact
+    func removeContact(_ user: User) {
+        if let index = vm.contacts.firstIndex(where: { $0.userName == user.userName}) {
+            vm.contacts.remove(at: index)
+        }
+    }
+    
+    //load one contact image
+    func loadContactImage(_ userName: String) -> Image? {
+        guard let index = vm.contactsPicture.firstIndex(where: { $0.userName == userName }) else { return nil }
+        guard let imageData = vm.contactsPicture[index].imageData else { return nil }
+        if let UIImage = UIImage(data: imageData) {
+            return Image(uiImage: UIImage)
+        }
+        return nil
+    }
+    
+    func newMessages(_ name: String, displayName: String) -> Messages {
+        let messages = Messages(receiver: name, displayName: displayName)// add displayname
+        vm.allMessages.append(messages)
+        if let index = vm.allMessages.firstIndex(where: { $0.receiver == name }) {
+            return vm.allMessages[index]
+        }
+        
+        return Messages(receiver: "")
+    }
+    
 } // end of contactsview
 
 #Preview {

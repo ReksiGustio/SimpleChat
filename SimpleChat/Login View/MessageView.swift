@@ -5,17 +5,22 @@
 //  Created by Reksi Gustio on 09/06/24.
 //
 
-import PhotosUI
+
 import Combine
+import MapKit
+import PhotosUI
 import SwiftUI
 
 struct MessageView: View {
     @ObservedObject var vm: ContentView.VM
     @ObservedObject var chatsVM: ChatsView.ChatsVM
+    @State private var latitude = 0.0
+    @State private var longitude = 0.0
     @State private var isOpened = false
     @State private var showDoc = false
     @State private var showLocationPicker = false
     @FocusState private var isFocused: Bool
+    let locationFetcher = LocationFetcher()
     var messages: Messages
     var backgroundImage: Image? {
         Image(uiImage: UIImage(data: vm.messageBackground) ?? UIImage())
@@ -43,8 +48,8 @@ struct MessageView: View {
                                 TextView(vm: vm, message: message)
                                     .id(message)
                                     .onAppear {
-                                        if message.read != "read" {
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                        if isReceiver(message) {
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                                 Task { await vm.updateRead(id: message.id) }
                                             }
                                         }
@@ -53,11 +58,7 @@ struct MessageView: View {
                             
                                 if let index = vm.allMessages.firstIndex(where: { $0.receiver == messages.receiver }) {
                                     TempMessageView(vm: vm, tempMessages: vm.allMessages[index].tempMessages, receiver: vm.allMessages[index].receiver, displayName: messages.displayName)
-                                } // end of temp message
-                            
-                            Rectangle()
-                                .fill(.white)
-                                .frame(maxHeight: 1)
+                                } // end of temp message                    
                             
                         } // end of vstack
                         .padding()
@@ -85,6 +86,7 @@ struct MessageView: View {
                         Spacer()
                         
                         Button {
+                            locationFetcher.start()
                             showDoc.toggle()
                             isFocused = false
                         } label: {
@@ -142,6 +144,14 @@ struct MessageView: View {
                         }
                         
                         Button {
+                            if let newlocation = locationFetcher.lastKnownLocation {
+                                latitude = newlocation.latitude
+                                longitude = newlocation.longitude
+                            } else {
+                                latitude = 0.0
+                                longitude = 0.0
+                                print("latitude: \(latitude), longitude: \(longitude)")
+                            }
                             showDoc = false
                             showLocationPicker = true
                         } label: {
@@ -201,15 +211,31 @@ struct MessageView: View {
             PhotoPreview(preview: photo, receiver: messages.displayName) { data in
                 Task {
                     let id = UUID().uuidString
-                    let imageString = "http://172.20.57.25:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
+                    let imageString = "http://localhost:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
                     await vm.sendText(text: "", image: imageString, imageId: id, data: data, receiver: messages.receiver, displayName: messages.displayName)
                     await uploadMessageImage(data, id: id, sender: vm.userName, receiver: messages.receiver)
                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
                 }
             }
         }
+        .sheet(item: $vm.locationPreview) { location in
+            NavigationStack {
+                Map(coordinateRegion: .constant(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude), span: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03))), annotationItems: [LocationCoordinate()]) { _ in
+                    MapMarker(coordinate: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude))
+                }
+                .navigationTitle("Location Preview")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+        }
         .sheet(isPresented: $showLocationPicker) {
-            Text("Map picker here")
+            SelectLocationView(latitude: latitude, longitude: longitude) { selectedCoordinate in
+                let stringCoordinate = "\(selectedCoordinate.latitude), \(selectedCoordinate.longitude)"
+                
+                Task {
+                    await vm.sendText(text: "", image: stringCoordinate, receiver: messages.receiver, displayName: messages.displayName)
+                    await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
+                } 
+            }
         }
         .onAppear {
             Task {
@@ -235,6 +261,11 @@ struct MessageView: View {
             return vm.contacts[index].status ?? ""
         }
         return ""
+    }
+    
+    func isReceiver(_ message: Message) -> Bool {
+        if message.read != "read" && !message.userRelated.hasPrefix(vm.userName) { return true }
+        else { return false }
     }
     
     var profilePicture: Image? {

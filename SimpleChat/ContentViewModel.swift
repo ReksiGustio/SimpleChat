@@ -78,6 +78,7 @@ extension ContentView {
         }
         @Published var messageText = ""
         @Published var imagePreview: PreviewPhoto?
+        @Published var locationPreview: LocationCoordinate?
         @Published var chatsUser: User?
         @Published var messageBackground = Data() {
             didSet {
@@ -354,7 +355,7 @@ extension ContentView {
                             }
                         }
                         allMessages.append(messages)
-                    }
+                    } // else if fetch error here
                 } // end task
             }
         } // end of get message func
@@ -363,8 +364,14 @@ extension ContentView {
         func sendText(text: String?, image: String?, imageId: String? = nil, data: Data? = nil, receiver: String, displayName: String) async {
             
             //create temporary message
-            if data == nil { createTemporaryText(text: text, receiver: receiver) }
-            else { 
+            if data == nil { 
+                if image == nil {
+                    createTemporaryText(text: text, receiver: receiver)
+                } else {
+                    createTemporaryLocation(location: image, receiver: receiver)
+                }
+            }
+            else {
                 createTemporaryImage(text: text, imageId: imageId, image: image, imageData: data, receiver: receiver)
             }
             
@@ -405,6 +412,12 @@ extension ContentView {
         func createTemporaryImage(text: String?, imageId: String?, image: String?, imageData: Data?, receiver: String) {
             if let index = allMessages.firstIndex(where: { $0.receiver == receiver }) {
                 allMessages[index].tempMessages.append(TempMessage(text: text ?? "", imageId: imageId, imageURL: image, imageData: imageData))
+            }
+        }
+        
+        func createTemporaryLocation(location: String?, receiver: String) {
+            if let index = allMessages.firstIndex(where: { $0.receiver == receiver }) {
+                allMessages[index].tempMessages.append(TempMessage(text: "", imageURL: location))
             }
         }
         

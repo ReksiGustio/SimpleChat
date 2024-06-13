@@ -148,7 +148,7 @@ struct Messages: Codable, Identifiable, Hashable {
     static let example = Messages(receiver: "TestUser", displayName: "Dummy Name", lastDate: .now.addingTimeInterval(-5000), items: [
         Message(id: 0, userRelated: "TestSender, TestUser", text: "message 1", image: nil, read: "read", date: ""),
         Message(id: 1, userRelated: "TestSender, TestUser", text: "message 2 with long text, so long that the text becomes wrapped up.", image: nil, read: "unread", date: ""),
-        Message(id: 2, userRelated: "TestUser, TestSender", text: "It's the receiver sending me the message", image: nil, read: "unread", date: ""),
+        Message(id: 2, userRelated: "TestUser, TestSender", text: "", image: "6.6710612335955375, -1.5860912827168079", read: "unread", date: ""),
     ])
 }
 
@@ -163,6 +163,7 @@ struct TempMessage: Codable, Hashable, Identifiable {
     var messageStatus = "Sending"
     
     static let example = TempMessage(text: "Mas Anies Mas Anies")
+    static let exampleLocation = TempMessage(text: "", imageURL: "6.6710612335955375, -1.5860912827168079")
 }
 
 //----------------------------------------------------------------

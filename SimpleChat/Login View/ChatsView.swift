@@ -38,10 +38,20 @@ struct ChatsView: View {
                             VStack(alignment: .leading) {
                                 Text(messages.displayName)
                                     .font(.headline)
-                                Text(messages.items.last?.image == nil ? (messages.items.last?.text ?? "") : "Image")
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(1)
+                                
+                                    Text(getLastMessage(messages))
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
                             } // end of vstack
+                            
+                            if countUnreadMessages(messages) > 0 {
+                                Text("\(countUnreadMessages(messages))")
+                                    .foregroundStyle(.white)
+                                    .padding(5)
+                                    .background(.red)
+                                    .clipShape(.circle)
+                                    .padding(.horizontal, 5)
+                            }
                             
                             Spacer()
                             
@@ -97,6 +107,7 @@ struct ChatsView: View {
         } // end of navsplitview
             
     } // end of body
+    
     
 } // end of chatsview
 
