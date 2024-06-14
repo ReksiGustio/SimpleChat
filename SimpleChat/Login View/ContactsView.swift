@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ContactsView: View {
-    @Environment(\.dismiss) var dismiss
     @ObservedObject var vm: ContentView.VM
     @StateObject var chatsVM = ChatsView.ChatsVM()
     @State private var searchText = ""
@@ -73,9 +72,6 @@ struct ContactsView: View {
                                         MessageView(vm: vm, chatsVM: chatsVM, messages: messages)
                                     }
                                 } // end of navlink
-                                Button("Delete contact", role: .destructive) { removeContact(user)
-                                    dismiss()
-                                }
                             } // end of list
                             .scrollDisabled(true)
                             .navigationTitle(user.name)
@@ -107,6 +103,11 @@ struct ContactsView: View {
                             } // end of vstack
                         } // end of hstack
                     } // end of navlink
+                    .contextMenu {
+                        Button("Delete contact", role: .destructive) {
+                            removeContact(user)
+                        }
+                    }
                 } // end of list
                 .navigationTitle("Contacts")
                 .searchable(text: $searchText, prompt: "Search contact name")

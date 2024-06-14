@@ -128,7 +128,9 @@ struct TempMessageView: View {
                         
                         Text(message.messageStatus)
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .fontWeight(vm.messageBackground.isEmpty ? .regular : .semibold)
+                            .foregroundStyle(vm.messageBackground.isEmpty ? .secondary : .primary)
+                            .shadow(radius: vm.messageBackground.isEmpty ? 0 : 5)
       
                     } // end of vstack
                     .padding(.bottom, 10)

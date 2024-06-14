@@ -58,6 +58,7 @@ struct DashboardView: View {
                                 .lineLimit(1)
                                 .padding(.horizontal, 8)
                                 .minimumScaleFactor(0.5)
+                                .dynamicTypeSize(...DynamicTypeSize.large)
                             
                         } // end of hstack
                     } // end of zstack
