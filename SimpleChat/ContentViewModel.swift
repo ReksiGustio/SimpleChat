@@ -28,7 +28,9 @@ extension ContentView {
         }
         
         //used for login page
+        @Published var connectionStatus = netStatus.isConnected
         @Published var loginState = LoginState.opening
+        @Published var connectionText = "Connected"
         @Published var showPassword = false
         @Published var rememberUser = false {
             didSet {
@@ -348,6 +350,8 @@ extension ContentView {
                             messages.lastDate = dateFormatter.date(from: lastDate) ?? .now
                         }
                         
+                        connectionStatus = .isConnected
+                        
                         for _ in allMessages {
                             if let messageIndex = allMessages.firstIndex(where: { $0.receiver == receiver }) {
                                 allMessages[messageIndex].items = messages.items
@@ -355,7 +359,13 @@ extension ContentView {
                             }
                         }
                         allMessages.append(messages)
-                    } // else if fetch error here
+                    } else if let data = String(data: response, encoding: .utf8) {
+                        // else if fetch error here
+                        timer.upstream.connect().cancel()
+                        connectionText = data
+                        connectionStatus = .isDisconnected
+                        
+                    }
                 } // end task
             }
         } // end of get message func

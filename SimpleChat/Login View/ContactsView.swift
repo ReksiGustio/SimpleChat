@@ -44,7 +44,9 @@ struct ContactsView: View {
                                 
                                 if let image = loadContactImage(user.userName) {
                                     NavigationLink {
-                                        ImageView(image: image, data: Data())
+                                        if let data = loadContactImageData(user.userName) {
+                                            ImageView(image: image, data: data)
+                                        }
                                     } label: {
                                         image
                                             .resizable()
@@ -144,6 +146,15 @@ struct ContactsView: View {
         guard let imageData = vm.contactsPicture[index].imageData else { return nil }
         if let UIImage = UIImage(data: imageData) {
             return Image(uiImage: UIImage)
+        }
+        return nil
+    }
+    
+    //load one contact image
+    func loadContactImageData(_ userName: String) -> Data? {
+        guard let index = vm.contactsPicture.firstIndex(where: { $0.userName == userName }) else { return nil }
+        if let imageData = vm.contactsPicture[index].imageData {
+            return imageData
         }
         return nil
     }

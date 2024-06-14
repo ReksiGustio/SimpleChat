@@ -9,6 +9,12 @@
 import CoreLocation
 import SwiftUI
 
+
+//this used for connection status
+enum netStatus {
+    case isConnected, isDisconnected, isConnecting
+}
+
 //this used for default response
 struct Response: Codable {
     let success: Bool

@@ -12,35 +12,76 @@ struct DashboardView: View {
     @State private var title = ""
     
     var body: some View {
-        TabView {
-            ChatsView(vm: vm)
-                .tabItem {
-                    Label("Chats", systemImage: "ellipsis.message.fill")
-                }
-                .onDisappear {
-                    if let encode = try? JSONEncoder().encode(vm.allMessages) {
-                        UserDefaults.standard.set(encode, forKey: vm.messageKey)
+        VStack {
+            TabView {
+                ChatsView(vm: vm)
+                    .tabItem {
+                        Label("Chats", systemImage: "ellipsis.message.fill")
                     }
-                }
+                    .onDisappear {
+                        if let encode = try? JSONEncoder().encode(vm.allMessages) {
+                            UserDefaults.standard.set(encode, forKey: vm.messageKey)
+                        }
+                    }
+                
+                ContactsView(vm: vm)
+                    .tabItem {
+                        Label("Contacts", systemImage: "person.crop.square.filled.and.at.rectangle.fill")
+                    }
+                
+                SettingsView(vm: vm)
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
+            } // end of tab view
             
-            ContactsView(vm: vm)
-                .tabItem {
-                    Label("Contacts", systemImage: "person.crop.square.filled.and.at.rectangle.fill")
+            if vm.connectionStatus != .isConnected {
+                Button {
+                    vm.timer = Timer.publish(every: 5, tolerance: 2, on: .main, in: .common).autoconnect()
+                    vm.connectionStatus = .isConnecting
+                    Task { await getMessage() }
+                } label: {
+                    ZStack {
+                        Rectangle()
+                            .fill(.blue)
+                            .frame(height: 30)
+                        
+                        HStack {
+                            if isConnecting {
+                                ProgressView().tint(.white)
+                                    .padding(.vertical, 2)
+                            }
+                            
+                            Text(isConnecting ? "Connecting" : "Error: \(vm.connectionText) Tap to retry")
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+                                .padding(.horizontal, 8)
+                                .minimumScaleFactor(0.5)
+                            
+                        } // end of hstack
+                    } // end of zstack
                 }
+                .buttonStyle(PlainButtonStyle())
+            } // end if
             
-            SettingsView(vm: vm)
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }
-        } // end of tab view
-        .onReceive(vm.timer) { _ in
-            for user in vm.contacts {
-                Task {
-                    await vm.fetchMessageByUsername(receiver: user.userName, displayName: user.name)
-                }
+        } // end of vstack
+        .onReceive(vm.timer) { _ in  Task { await getMessage() } }
+    } // end of body
+    
+    var isConnecting: Bool {
+        if vm.connectionStatus == .isConnecting { true }
+        else { false }
+    }
+    
+    func getMessage() async {
+        for user in vm.contacts {
+            Task {
+                await vm.fetchMessageByUsername(receiver: user.userName, displayName: user.name)
             }
         }
-    } // end of body
+    }
+    
 } // end of dashboard view
 
 #Preview {
