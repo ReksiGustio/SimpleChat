@@ -81,7 +81,7 @@ struct ProfileView: View {
                     if settingsVM.compressedImage.isEmpty {
                             vm.user.picture = ""
                     } else {
-                        vm.user.picture = "http://172.20.57.25:3000/download/profile/\(vm.userName)-profile_pic.jpg"
+                        vm.user.picture = "http://localhost:3000/download/profile/\(vm.userName)-profile_pic.jpg"
                         vm.userImage = settingsVM.compressedImage
                     }
                     Task {

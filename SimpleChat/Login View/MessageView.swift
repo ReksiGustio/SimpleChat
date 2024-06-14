@@ -211,7 +211,7 @@ struct MessageView: View {
             PhotoPreview(preview: photo, receiver: messages.displayName) { data in
                 Task {
                     let id = UUID().uuidString
-                    let imageString = "http://172.20.57.25:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
+                    let imageString = "http://localhost:3000/download/message/\(vm.userName)-\(messages.receiver)-\(id)-message_pic.jpg"
                     await vm.sendText(text: "", image: imageString, imageId: id, data: data, receiver: messages.receiver, displayName: messages.displayName)
                     await uploadMessageImage(data, id: id, sender: vm.userName, receiver: messages.receiver)
                     await vm.fetchMessageByUsername(receiver: messages.receiver, displayName: messages.displayName)
