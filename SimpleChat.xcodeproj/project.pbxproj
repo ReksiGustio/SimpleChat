@@ -12,6 +12,7 @@
 		831F1B332C155C32000AC678 /* NewChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831F1B322C155C32000AC678 /* NewChatView.swift */; };
 		831F1B372C157664000AC678 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831F1B362C157664000AC678 /* SettingsViewModel.swift */; };
 		8326170D2C18721D000FEA41 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8326170C2C18721D000FEA41 /* ImageView.swift */; };
+		833138F92C1BD20E00D8CE04 /* QRView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833138F82C1BD20E00D8CE04 /* QRView.swift */; };
 		833B88802C17D880004B9258 /* PhotoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833B887F2C17D880004B9258 /* PhotoPreview.swift */; };
 		8360DDC12C13EB410035C815 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8360DDC02C13EB410035C815 /* DashboardView.swift */; };
 		8360DDC32C13EBE70035C815 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8360DDC22C13EBE70035C815 /* SettingsView.swift */; };
@@ -34,6 +35,8 @@
 		83AABEA02C1485E600B5BF35 /* ChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AABE9F2C1485E600B5BF35 /* ChatsView.swift */; };
 		83AC61052C170672008B0461 /* NewChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AC61042C170672008B0461 /* NewChatViewModel.swift */; };
 		83AC61072C170812008B0461 /* ChatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AC61062C170812008B0461 /* ChatsViewModel.swift */; };
+		83C067C42C1BFAB300377D4E /* DataScannerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83C067C32C1BFAB300377D4E /* DataScannerRepresentable.swift */; };
+		83C067C62C1BFC6800377D4E /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83C067C52C1BFC6800377D4E /* QRScannerView.swift */; };
 		83CAA42E2C1AA9E00074573E /* SelectLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83CAA42D2C1AA9E00074573E /* SelectLocationView.swift */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +47,7 @@
 		831F1B322C155C32000AC678 /* NewChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChatView.swift; sourceTree = "<group>"; };
 		831F1B362C157664000AC678 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		8326170C2C18721D000FEA41 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		833138F82C1BD20E00D8CE04 /* QRView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRView.swift; sourceTree = "<group>"; };
 		833B887F2C17D880004B9258 /* PhotoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPreview.swift; sourceTree = "<group>"; };
 		8360DDC02C13EB410035C815 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		8360DDC22C13EBE70035C815 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -67,6 +71,8 @@
 		83AABE9F2C1485E600B5BF35 /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
 		83AC61042C170672008B0461 /* NewChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChatViewModel.swift; sourceTree = "<group>"; };
 		83AC61062C170812008B0461 /* ChatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsViewModel.swift; sourceTree = "<group>"; };
+		83C067C32C1BFAB300377D4E /* DataScannerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataScannerRepresentable.swift; sourceTree = "<group>"; };
+		83C067C52C1BFC6800377D4E /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
 		83CAA42D2C1AA9E00074573E /* SelectLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectLocationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,8 +104,10 @@
 				83CAA42D2C1AA9E00074573E /* SelectLocationView.swift */,
 				8360DDCB2C1406640035C815 /* ContactsView.swift */,
 				8360DDCF2C14214C0035C815 /* AddContactView.swift */,
+				83C067C52C1BFC6800377D4E /* QRScannerView.swift */,
 				8360DDC22C13EBE70035C815 /* SettingsView.swift */,
 				831F1B362C157664000AC678 /* SettingsViewModel.swift */,
+				833138F82C1BD20E00D8CE04 /* QRView.swift */,
 				8360DDC92C13F1F50035C815 /* ProfileView.swift */,
 				83A8418F2C1956C20049A6C3 /* BackgroundSettingView.swift */,
 			);
@@ -143,6 +151,7 @@
 				8360DDC62C13ECB90035C815 /* Logout View */,
 				83991F2F2C12EC0B0062C16C /* Routes.swift */,
 				83991F2D2C12E95C0062C16C /* ResponseData.swift */,
+				83C067C32C1BFAB300377D4E /* DataScannerRepresentable.swift */,
 				83991F232C12E7A10062C16C /* Assets.xcassets */,
 				83991F252C12E7A10062C16C /* Preview Content */,
 			);
@@ -236,10 +245,12 @@
 				83693C392C134FF00035292E /* LogoutViewModel.swift in Sources */,
 				831F1B2F2C151E0B000AC678 /* MessageView.swift in Sources */,
 				8360DDD02C14214C0035C815 /* AddContactView.swift in Sources */,
+				83C067C42C1BFAB300377D4E /* DataScannerRepresentable.swift in Sources */,
 				83AC61072C170812008B0461 /* ChatsViewModel.swift in Sources */,
 				831F1B332C155C32000AC678 /* NewChatView.swift in Sources */,
 				83991F2E2C12E95C0062C16C /* ResponseData.swift in Sources */,
 				83AABEA02C1485E600B5BF35 /* ChatsView.swift in Sources */,
+				833138F92C1BD20E00D8CE04 /* QRView.swift in Sources */,
 				833B88802C17D880004B9258 /* PhotoPreview.swift in Sources */,
 				8360DDC12C13EB410035C815 /* DashboardView.swift in Sources */,
 				839F9E282C19C286007516FD /* TempMessageViewModel.swift in Sources */,
@@ -248,6 +259,7 @@
 				83CAA42E2C1AA9E00074573E /* SelectLocationView.swift in Sources */,
 				83991F202C12E79F0062C16C /* SimpleChatApp.swift in Sources */,
 				83693C3B2C1356CC0035292E /* RegisterView.swift in Sources */,
+				83C067C62C1BFC6800377D4E /* QRScannerView.swift in Sources */,
 				831F1B372C157664000AC678 /* SettingsViewModel.swift in Sources */,
 				83AC61052C170672008B0461 /* NewChatViewModel.swift in Sources */,
 				8360DDCA2C13F1F50035C815 /* ProfileView.swift in Sources */,
@@ -389,6 +401,7 @@
 				DEVELOPMENT_TEAM = A392843C4K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Allowing these enable you to use camera to scan QR Codes.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allowing these to enable to fetch current user location.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Allowing these enable you to save picture to albums.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -421,6 +434,7 @@
 				DEVELOPMENT_TEAM = A392843C4K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Allowing these enable you to use camera to scan QR Codes.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allowing these to enable to fetch current user location.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Allowing these enable you to save picture to albums.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

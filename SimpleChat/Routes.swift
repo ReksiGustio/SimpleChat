@@ -137,13 +137,30 @@ func sendMessage(message: String?, image: String?, sender: String, receiver: Str
     }
 }
 
-func updateMessage(id: Int, token: String) async -> Data {
+func updateMessage(id: Int) async -> Data {
     let readData = updateRead(read: "read")
     guard let encoded = try? JSONEncoder().encode(readData) else { return Data() }
     let url = URL(string: "http://172.20.57.25:3000/message/\(id)")!
     var request = URLRequest(url: url)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.setValue(token, forHTTPHeaderField: "Authorization")
+    request.httpMethod = "PUT"
+    request.timeoutInterval = 5
+    
+    do {
+        let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
+        return data
+    } catch {
+        print(error.localizedDescription)
+        return Data()
+    }
+}
+
+func updateNotification(id: Int) async -> Data {
+    let readData = notification(notify: "notified")
+    guard let encoded = try? JSONEncoder().encode(readData) else { return Data() }
+    let url = URL(string: "http://172.20.57.25:3000/message/\(id)")!
+    var request = URLRequest(url: url)
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "PUT"
     request.timeoutInterval = 5
     

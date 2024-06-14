@@ -17,39 +17,44 @@ struct SelectLocationView: View {
     var onSave: (LocationCoordinate) -> Void
     
     var body: some View {
-        ZStack {
-            Map(coordinateRegion: $region, annotationItems: [location]) { location in
-                MapAnnotation(coordinate: location.coordinate) { }
-            }
-            .onAppear {
-                withAnimation {
-                    region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+        NavigationStack {
+            ZStack {
+                Map(coordinateRegion: $region, annotationItems: [location]) { location in
+                    MapAnnotation(coordinate: location.coordinate) { }
                 }
-            }
-            .ignoresSafeArea()
-            Image(systemName: "dot.scope")
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.white.opacity(0.7))
-                .frame(width: 80, height: 80)
-            
-            VStack {
-                Spacer()
+                .onAppear {
+                    withAnimation {
+                        region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+                    }
+                }
+                .ignoresSafeArea()
                 
-                Button("Use this location") {
-                    location.latitude = region.center.latitude
-                    location.longitude = region.center.longitude
-                    onSave(location)
-                    dismiss()
+                Image(systemName: "dot.scope")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.white.opacity(0.7))
+                    .frame(width: 80, height: 80)
+                
+                VStack {
+                    Spacer()
+                    
+                    Button("Use this location") {
+                        location.latitude = region.center.latitude
+                        location.longitude = region.center.longitude
+                        onSave(location)
+                        dismiss()
+                    }
+                    .padding()
+                    .font(.headline.bold())
+                    .foregroundStyle(.white)
+                    .background(.black.opacity(0.75))
+                    .clipShape(.capsule)
+                    .padding(.vertical, 30)
                 }
-                .padding()
-                .font(.headline.bold())
-                .foregroundStyle(.white)
-                .background(.black.opacity(0.75))
-                .clipShape(.capsule)
-                .padding(.vertical, 30)
+                
             }
-            
+            .navigationTitle("Select Location")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
     

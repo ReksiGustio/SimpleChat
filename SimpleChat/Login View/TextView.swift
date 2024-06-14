@@ -260,5 +260,5 @@ struct TextView: View {
 } // end of textview
 
 #Preview {
-    TextView(vm: ContentView.VM(), message: Message(id: 0, userRelated: "", text: "", image: "6.6710612335955375, -1.5860912827168079", read: "unread", date: ""))
+    TextView(vm: ContentView.VM(), message: Message(id: 0, userRelated: "", text: "", image: "6.6710612335955375, -1.5860912827168079", read: "unread", date: "", notify: "notified"))
 }

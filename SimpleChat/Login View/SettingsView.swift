@@ -47,10 +47,20 @@ struct SettingsView: View {
                     } // end of hstack
                 } // end of profile
                 
-                Text("Username: \(vm.user.userName)")
-                    .font(.subheadline)
+                NavigationLink {
+                    QRView(userName: vm.user.userName)
+                } label: {
+                    HStack {
+                        Image(systemName: "qrcode")
+                            .font(.title3)
+                        
+                        Text("Username: \(vm.user.userName)")
+                            .font(.subheadline)
+                            .lineLimit(1)
+                                
+                    } // end if hstack
                     .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                } // end of navigationlink
                 
                 //logout
                 Section {

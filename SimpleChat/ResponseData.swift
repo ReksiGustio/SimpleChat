@@ -72,6 +72,11 @@ struct updateRead: Codable {
     let read: String
 }
 
+//this used for update notification
+struct notification: Codable {
+    let notify: String
+}
+
 //----------------------------------------------------------------
 //single user property
 struct User: Codable, Identifiable, Hashable {
@@ -124,6 +129,7 @@ struct Message: Codable, Hashable, Identifiable {
     let image: String?
     let read: String
     let date: String
+    let notify: String
 }
 
 //message to send property
@@ -152,9 +158,9 @@ struct Messages: Codable, Identifiable, Hashable {
     var tempMessages = [TempMessage]()
     
     static let example = Messages(receiver: "TestUser", displayName: "Dummy Name", lastDate: .now.addingTimeInterval(-5000), items: [
-        Message(id: 0, userRelated: "TestSender, TestUser", text: "message 1", image: nil, read: "read", date: ""),
-        Message(id: 1, userRelated: "TestSender, TestUser", text: "message 2 with long text, so long that the text becomes wrapped up.", image: nil, read: "unread", date: ""),
-        Message(id: 2, userRelated: "TestUser, TestSender", text: "", image: "6.6710612335955375, -1.5860912827168079", read: "unread", date: ""),
+        Message(id: 0, userRelated: "TestSender, TestUser", text: "message 1", image: nil, read: "read", date: "", notify: "notified"),
+        Message(id: 1, userRelated: "TestSender, TestUser", text: "message 2 with long text, so long that the text becomes wrapped up.", image: nil, read: "unread", date: "",notify: "notified"),
+        Message(id: 2, userRelated: "TestUser, TestSender", text: "", image: "6.6710612335955375, -1.5860912827168079", read: "unread", date: "",notify: "notified")
     ])
 }
 

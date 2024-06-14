@@ -14,6 +14,7 @@ struct AddContactView: View {
 
     @State private var message = ""
     @State private var showMessage = false
+    @State private var showScanner = false
     
     @Binding var searchName: String
     @Binding var user: User?
@@ -35,6 +36,12 @@ struct AddContactView: View {
                         }
                     }
                 } // end of hstack
+                
+                Button("Scan QR Code") { 
+                    showScanner = true
+                    searchName = ""
+                }
+                
             } // end of section
             
             Section {
@@ -83,7 +90,14 @@ struct AddContactView: View {
                 Button("Done") { isFocused = false }
             }
         }
-        
+        .sheet(isPresented: $showScanner) {
+            QRScannerView() { scannedText in
+                searchName = scannedText
+                Task {
+                    await searchUser(searchName)
+                }
+            }
+        }
         .onAppear { user = nil }
         .alert(message, isPresented: $showMessage) { }
     }

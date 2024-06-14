@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 extension ContentView {
     // ViewModel for creating state properties
@@ -265,7 +266,7 @@ extension ContentView {
         
         func updateRead(id: Int) async {
             Task {
-                let tempResponse = await updateMessage(id: id, token: token)
+                let tempResponse = await updateMessage(id: id)
                 
                 if tempResponse.isEmpty {
                     //failed response here
@@ -352,6 +353,14 @@ extension ContentView {
                         
                         connectionStatus = .isConnected
                         
+                        for message in messages.items {
+                            if message.notify.hasPrefix("delivered") {
+                                Task {
+                                    await updateNotification(id: message.id)
+                                }
+                            }
+                        }
+                        
                         for _ in allMessages {
                             if let messageIndex = allMessages.firstIndex(where: { $0.receiver == receiver }) {
                                 allMessages[messageIndex].items = messages.items
@@ -369,6 +378,10 @@ extension ContentView {
                 } // end task
             }
         } // end of get message func
+        
+        func sendNotification(message: String, subMessage: String) {
+            
+        }
         
         //send message
         func sendText(text: String?, image: String?, imageId: String? = nil, data: Data? = nil, receiver: String, displayName: String) async {
