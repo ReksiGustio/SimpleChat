@@ -270,11 +270,8 @@ extension ContentView {
         
         func updateRead(id: Int) async {
             Task {
-                let tempResponse = await updateMessage(id: id)
-                
-                if tempResponse.isEmpty {
-                    //failed response here
-                }
+                print(id)
+                await updateMessage(id: id)
             }
         } // end of update func
         

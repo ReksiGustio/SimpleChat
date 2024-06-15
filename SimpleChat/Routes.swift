@@ -137,9 +137,9 @@ func sendMessage(message: String?, image: String?, sender: String, receiver: Str
     }
 }
 
-func updateMessage(id: Int) async -> Data {
+func updateMessage(id: Int) async {
     let readData = updateRead(read: "read")
-    guard let encoded = try? JSONEncoder().encode(readData) else { return Data() }
+    guard let encoded = try? JSONEncoder().encode(readData) else { return }
     let url = URL(string: "http://localhost:3000/message/\(id)")!
     var request = URLRequest(url: url)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -147,11 +147,9 @@ func updateMessage(id: Int) async -> Data {
     request.timeoutInterval = 5
     
     do {
-        let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
-        return data
+        let _ = try await URLSession.shared.upload(for: request, from: encoded)
     } catch {
         print(error.localizedDescription)
-        return Data()
     }
 }
 

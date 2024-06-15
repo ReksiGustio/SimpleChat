@@ -80,18 +80,10 @@ struct ChatsView: View {
                 }
             }
             .onAppear {
-                for user in vm.contacts {
-                    Task {
-                        await vm.fetchMessageByUsername(receiver: user.userName, displayName: user.name)
-                    }
-                }
+                getAllMessages()
             }
             .onReceive(vm.timer) { _ in
-                for user in vm.contacts {
-                    Task {
-                        await vm.fetchMessageByUsername(receiver: user.userName, displayName: user.name)
-                    }
-                }
+                getAllMessages()
             } // end of list
         } detail: {
             if vm.chatsUser != nil {

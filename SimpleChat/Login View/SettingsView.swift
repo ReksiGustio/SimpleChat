@@ -67,6 +67,26 @@ struct SettingsView: View {
                     NavigationLink("Set chat background") {
                         BackgroundSettingView(vm: vm)
                     }
+                    NavigationLink("Help") {
+                        Form {
+                            NavigationLink("Deleting contact") {
+                                HelpView1()
+                            }
+                            NavigationLink("Resend failed messages") {
+                                HelpView2()
+                            }
+                        }
+                        .navigationTitle("Help")
+                    }
+                    NavigationLink("About SimpleChat") {
+                        Divider()
+                        
+                        Text(aboutText)
+                            .padding()
+                            .navigationTitle("About Simple Chat")
+                        
+                        Spacer()
+                    }
                     Button("Log out") { settingsVM.showLogoutAlert = true }
                         .foregroundStyle(.red)
                 }

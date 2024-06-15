@@ -29,9 +29,13 @@ struct AddContactView: View {
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
                         .focused($isFocused)
+                        .onSubmit {
+                            isFocused = false
+                        }
                     
                     Button("Submit") {
                         Task {
+                            isFocused = false
                             await searchUser(searchName)
                         }
                     }

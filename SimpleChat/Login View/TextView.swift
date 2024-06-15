@@ -100,7 +100,6 @@ struct TextView: View {
                         .shadow(radius: vm.messageBackground.isEmpty ? 0 : 5)
 
                 } // end of vstack
-                .padding(.bottom, 10)
                 
                 Spacer()
                 
@@ -110,6 +109,7 @@ struct TextView: View {
                 
             } // end of hstack
             .background(.blue.opacity(message.read != "read" ? 0.4 : 0))
+            .clipShape(.rect(cornerRadius: 5))
         } else {
             HStack {
                 Rectangle()
@@ -205,7 +205,6 @@ struct TextView: View {
                     .shadow(radius: vm.messageBackground.isEmpty ? 0 : 5)
   
                 } // end of vstack
-                .padding(.bottom, 10)
                 
             } // end of hstack
             .fullScreenCover(item: $vm.imagePreview) { preview in

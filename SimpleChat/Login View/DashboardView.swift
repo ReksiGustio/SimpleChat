@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DashboardView: View {
     @ObservedObject var vm: ContentView.VM
+    @State private var showError = false
     @State private var title = ""
     
     var body: some View {
@@ -39,7 +40,9 @@ struct DashboardView: View {
                 Button {
                     vm.timer = Timer.publish(every: 5, tolerance: 2, on: .main, in: .common).autoconnect()
                     vm.connectionStatus = .isConnecting
-                    Task { await getMessage() }
+                    if !vm.contacts.isEmpty {
+                        Task { await getMessage() }
+                    }
                 } label: {
                     ZStack {
                         Rectangle()
@@ -59,6 +62,9 @@ struct DashboardView: View {
                                 .padding(.horizontal, 8)
                                 .minimumScaleFactor(0.5)
                                 .dynamicTypeSize(...DynamicTypeSize.large)
+                                .contextMenu {
+                                    Button("Show Error") { showError = true }
+                                }
                             
                         } // end of hstack
                     } // end of zstack
@@ -68,6 +74,9 @@ struct DashboardView: View {
             
         } // end of vstack
         .onReceive(vm.timer) { _ in  Task { await getMessage() } }
+        .sheet(isPresented: $showError) {
+            Text(vm.connectionText)
+        }
     } // end of body
     
     var isConnecting: Bool {

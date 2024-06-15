@@ -44,8 +44,68 @@ extension SettingsView {
         }
         
     } // end of view model
+    
+    var aboutText: String {
+        """
+Simple Chat is a messaging application that let you contact with other user, created by Gustio and only for practice coding purpose.
+
+This app is made with 80% of SwiftUI and 20% of UIKit framework. this app will never be put into beta stage let alone releasing it to the market, this app is also doesn't use any external package dependencies so it's fully customizable, anyone may clone this code for free and make your version based on this code.
+
+Thank you for trying!
+"""
+    }
+    
 }
 
+struct HelpView1: View {
+    
+    var body: some View {
+        GeometryReader { proxy in
+            VStack {
+                Image(.helpPicture1)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 300)
+                    .clipShape(.rect(cornerRadius: 20))
+                    .padding()
+                
+                Divider()
+                
+                Text("To delete one contact, you need to long-press the contact and it will bring the context menu to delete selected contact.")
+                    .padding()
+            }
+        }
+        .padding()
+        .navigationTitle("Deleting Contact")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+    
+}
+
+struct HelpView2: View {
+    
+    var body: some View {
+        GeometryReader { proxy in
+            VStack {
+                Image(.helpPicture2)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 300)
+                    .clipShape(.rect(cornerRadius: 20))
+                    .padding()
+                
+                Divider()
+                
+                Text("For message that failed to send, you can long-press to bring the context menu,you can either resend the message, copying the text to cliboard, or delete the message.")
+                    .padding()
+            }
+        }
+        .padding()
+        .navigationTitle("Deleting Contact")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+    
+}
 
 extension StringProtocol {
     var data: Data { Data(utf8) }

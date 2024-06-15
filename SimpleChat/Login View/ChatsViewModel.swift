@@ -79,4 +79,14 @@ extension ChatsView {
         return count
     }
     
+    func getAllMessages() {
+        if !vm.contacts.isEmpty {
+            for user in vm.contacts {
+                Task {
+                    await vm.fetchMessageByUsername(receiver: user.userName, displayName: user.name)
+                }
+            }
+        }
+    }
+    
 }

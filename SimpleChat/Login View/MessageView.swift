@@ -169,6 +169,7 @@ struct MessageView: View {
                         }
                         
                     } // end of hstack
+                    .padding(10)
                     
                 } // end if
                 
